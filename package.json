@@ -1,0 +1,36 @@
+{
+  "name": "pe-workbench",
+  "version": "1.0.0",
+  "description": "PE-Workbench (药物经济学工作台) - a configuration-driven workbench for pharmacoeconomic analysis: controlled workflows, role-based permissions, hash-chain audit trail and electronic signatures for cost-effectiveness studies, economic models and HTA submissions",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node test/run-all.js",
+    "verify-audit": "node scripts/verify-audit.js",
+    "backup": "node scripts/backup.js",
+    "build:desktop": "node scripts/build-desktop.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": [
+    "pharmacoeconomics",
+    "health-economics",
+    "cost-effectiveness",
+    "cost-utility",
+    "budget-impact",
+    "hta",
+    "icer",
+    "qaly",
+    "markov-model",
+    "cheers",
+    "audit-trail",
+    "electronic-signature",
+    "workflow"
+  ]
+}

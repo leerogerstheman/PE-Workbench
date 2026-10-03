@@ -1,0 +1,239 @@
+{
+  "code": "CHEERS-2022",
+  "title": "卫生经济评估报告规范自查表（CHEERS 2022）",
+  "titleEn": "Consolidated Health Economic Evaluation Reporting Standards 2022 - Self-Assessment",
+  "scope": "report_assessment",
+  "category": "reporting",
+  "gxpAreas": ["RPT", "ANA", "MDL", "CST", "OUT", "EVS", "RSD"],
+  "regulation": "CHEERS 2022 - Consolidated Health Economic Evaluation Reporting Standards (Husereau et al., Value in Health 2022; endorsed by >15 journals and the EQUATOR Network)",
+  "authority": "ISPOR / CHEERS 2022 Task Force",
+  "version": "CHEERS 2022（28 项）；本项目条目为依据该清单拟定的自查断言，使用时请对照原文清单核对",
+  "description": "经济评估报告投稿或提交前的逐项自查：标题与摘要、背景与目标、分析计划、人群与场景、对照、时间范围与贴现、结局的选择/测量/估值、成本测量与估价、币种与价格日期、模型描述、分析与假设、异质性、分布效应、不确定性、患者参与、参数、结果汇总、不确定性影响、参与影响、结论与局限、资金与利益冲突、研究影响。",
+  "descriptionEn": "Item-by-item self-assessment before submitting or publishing an economic evaluation, covering all 28 CHEERS 2022 items.",
+  "items": [
+    {
+      "clauseRef": "CHEERS 2022 第 1 项 · Title",
+      "requirement": "标题能识别该研究为卫生经济评估",
+      "requirementEn": "The title identifies the study as a health economic evaluation",
+      "guidance": "如标题含'成本-效果''经济评估'字样。审稿人与读者靠标题在文献流中识别经济评估。",
+      "riskLevel": "minor",
+      "evidenceHint": "标题文本"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 2 项 · Abstract",
+      "requirement": "摘要为结构式摘要，含目标人群、干预与对照、视角、时间范围、方法要点、结果（增量成本与效果）、结论",
+      "requirementEn": "Structured abstract with population, interventions, perspective, time horizon, methods, results (incremental costs and effects) and conclusions",
+      "guidance": "摘要按期刊模板结构式呈现。数字与正文一致。",
+      "riskLevel": "major",
+      "evidenceHint": "摘要文本"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 3 项 · Background and objectives",
+      "requirement": "背景交代决策问题与评估目标，说明评估服务于谁的什么决定",
+      "requirementEn": "Background describes the decision problem and evaluation objective",
+      "guidance": "'谁拿这个结论做什么决定'是背景的灵魂：医保准入、处方集、定价。",
+      "riskLevel": "major",
+      "evidenceHint": "背景段落"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 4 项 · Health economic analysis plan",
+      "requirement": "说明是否/在哪里预先注册了健康经济分析计划（HEAP）或研究方案，并注明版本与日期",
+      "requirementEn": "States whether and where a health economic analysis plan was pre-registered, with version and date",
+      "guidance": "预先注册是防止'先看结果后定方法'的关键机制；未注册要如实声明。",
+      "riskLevel": "major",
+      "evidenceHint": "HEAP/方案编号与版本"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 5 项 · Study population",
+      "requirement": "描述目标人群的特征、纳入标准与来源",
+      "requirementEn": "Describes the target population, inclusion criteria and source",
+      "guidance": "人群定义应与适应症和报销范围一致。",
+      "riskLevel": "major",
+      "evidenceHint": "人群描述段落"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 6 项 · Settings and location",
+      "requirement": "说明评估的场景与地点（国家、医疗环境层级）",
+      "requirementEn": "States the setting and location (country, level of care)",
+      "guidance": "成本与效用都有地域性：同一个药在不同国家的评估不可直接互换。",
+      "riskLevel": "major",
+      "evidenceHint": "场景描述"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 7 项 · Comparators",
+      "requirement": "描述对照选择及其理由（标准治疗/最常用替代/方案要求的对照）",
+      "requirementEn": "Describes comparators and the rationale for choosing them",
+      "guidance": "'选哪个对照'决定 ICER 的一切。对照必须是最相关的临床替代，不是'最好算的那个'。",
+      "riskLevel": "critical",
+      "evidenceHint": "对照描述与依据"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 8 项 · Time horizon",
+      "requirement": "说明时间范围及其足以捕捉所有重要成本与结局的理由",
+      "requirementEn": "States the time horizon and why it captures all relevant costs and outcomes",
+      "guidance": "慢性病用 1 年范围需要特别理由。终身模型必须说明外推方法。",
+      "riskLevel": "major",
+      "evidenceHint": "时间范围章节"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 9 项 · Discount rate",
+      "requirement": "报告成本和结局的贴现率（可不同），说明选择依据",
+      "requirementEn": "Reports discount rates for costs and outcomes, with justification",
+      "guidance": "中国指南建议基线与敏感性分析中的贴现率设定，需注明来源（如 3%/5%）。",
+      "riskLevel": "major",
+      "evidenceHint": "贴现率与依据"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 10 项 · Choice of health outcomes",
+      "requirement": "说明选择的健康结局及其理由（如 QALY/LYG/事件）、与决策的相关性",
+      "requirementEn": "Explains the choice of health outcomes and their relevance to the decision",
+      "guidance": "结局选择应与方案一致：CUA 用 QALY，CEA 可用 LYG 或事件结局。",
+      "riskLevel": "major",
+      "evidenceHint": "结局选择章节"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 11 项 · Measurement of health outcomes",
+      "requirement": "说明结局测量的数据来源与方法（量表、工具、随访）",
+      "requirementEn": "Describes how health outcomes were measured (instruments, data sources)",
+      "guidance": "测量方法决定证据强度：随机对照试验 vs 观察 vs 假设。",
+      "riskLevel": "major",
+      "evidenceHint": "测量方法章节"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 12 项 · Valuation of health outcomes",
+      "requirement": "说明结局估值（效用值）的来源人群、方法与价值集，含映射时的方法",
+      "requirementEn": "Describes health outcome valuation: source population, method, value set, mapping if used",
+      "guidance": "EQ-5D 价值集必须注明国别版本（如中国价值集）。映射要报告验证指标。",
+      "riskLevel": "critical",
+      "evidenceHint": "效用估值方法与价值集引用"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 13 项 · Measurement and valuation of resources and costs",
+      "requirement": "说明资源用量的测量方法与单位成本来源",
+      "requirementEn": "Describes how resources and unit costs were measured and valued",
+      "guidance": "资源清单与单价分开呈现，各自可溯源。",
+      "riskLevel": "critical",
+      "evidenceHint": "成本方法与来源表"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 14 项 · Currency, price date, and conversion",
+      "requirement": "说明币种、价格日期及换算方法（含通货膨胀调整）",
+      "requirementEn": "States currency, price date and conversion methods",
+      "guidance": "报告必须能回答'这个价格是哪一年的钱'。",
+      "riskLevel": "major",
+      "evidenceHint": "币种与价格日期声明"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 15 项 · Rationale and description of model",
+      "requirement": "说明模型的原理、结构、假设，含'为什么这个结构合适'与图示/引用",
+      "requirementEn": "Describes the model rationale, structure and assumptions, with diagram or reference",
+      "guidance": "模型结构必须可审查：状态、周期、转移、假设。ISPOR-SMDM 七问的第一问就是结构透明。",
+      "riskLevel": "critical",
+      "evidenceHint": "模型结构章节与图示"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 16 项 · Analytics and assumptions",
+      "requirement": "说明分析方法与全部关键假设，含计算方式（队列模拟/个体模拟等）",
+      "requirementEn": "Describes analytical methods and all key assumptions",
+      "guidance": "假设是'可争议的选择'，不能藏在附录里。",
+      "riskLevel": "major",
+      "evidenceHint": "假设清单"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 17 项 · Characterising heterogeneity",
+      "requirement": "说明是否及如何处理人群异质性（亚组分析）",
+      "requirementEn": "Describes how heterogeneity is characterised (subgroup analysis)",
+      "guidance": "亚组分析应与方案一致，防事后挑亚组。",
+      "riskLevel": "major",
+      "evidenceHint": "亚组分析章节"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 18 项 · Characterising distributional effects",
+      "requirement": "说明是否分析公平性/分布效应（不同人群的成本与获益分布）",
+      "requirementEn": "Describes distributional effects analysis (equity), or states it was not done",
+      "guidance": "未分析分布效应也要显式声明'未分析'并说明理由。",
+      "riskLevel": "minor",
+      "evidenceHint": "分布效应章节或明确声明"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 19 项 · Characterising uncertainty",
+      "requirement": "说明参数不确定性与方法学不确定性的刻画方式（DSA/PSA/情景）",
+      "requirementEn": "Describes how parameter and methodological uncertainty are characterised",
+      "guidance": "不确定性不是缺陷，不展示不确定性才是。PSA 要报告分布设定。",
+      "riskLevel": "critical",
+      "evidenceHint": "敏感性分析章节（DSA/PSA/情景）"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 20 项 · Approach to engagement with patients and others affected",
+      "requirement": "说明患者及其他受影响方参与评估的方式（或声明未参与及其理由）",
+      "requirementEn": "Describes patient and stakeholder engagement, or states none and why",
+      "guidance": "患者参与正在成为国际标准；未参与要如实声明。",
+      "riskLevel": "minor",
+      "evidenceHint": "患者参与章节或声明"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 21 项 · Study parameters",
+      "requirement": "以表格报告全部研究参数：基线值、范围、分布、来源",
+      "requirementEn": "Reports all study parameters in a table: base-case values, ranges, distributions, sources",
+      "guidance": "参数表是模型可复现性的基础：每个参数都要能回答问题'从哪来'。",
+      "riskLevel": "critical",
+      "evidenceHint": "参数表"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 22 项 · Summary of main results",
+      "requirement": "报告主要结果：各组成本与结局、增量成本、增量效果、ICER/INMB（含不确定性区间）",
+      "requirementEn": "Reports main results: costs and outcomes per arm, incremental cost, incremental effect, ICER/INMB with uncertainty",
+      "guidance": "增量成本与增量效果必须与比值同时呈现——只看 ICER 无法判断。",
+      "riskLevel": "critical",
+      "evidenceHint": "结果表（增量分析）"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 23 项 · Effect of uncertainty",
+      "requirement": "报告不确定性分析结果（DSA 龙卷风图/PSA 散点/可接受曲线/情景）",
+      "requirementEn": "Reports the effect of uncertainty (tornado, PSA scatter, acceptability curve, scenarios)",
+      "guidance": "结论的稳健性由这一节证明；只报告点估计的报告在评审中不可用。",
+      "riskLevel": "critical",
+      "evidenceHint": "不确定性结果图与表"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 24 项 · Effect of engagement",
+      "requirement": "报告患者/受影响方参与对研究设计或结果的影响",
+      "requirementEn": "Reports the effect of patient/stakeholder engagement on the study",
+      "guidance": "参与过就说影响是什么；没参与过可标注不适用。",
+      "riskLevel": "minor",
+      "evidenceHint": "参与影响描述"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 25 项 · Study findings, limitations, generalisability, and current knowledge",
+      "requirement": "讨论研究发现、局限、外推性（generalizability）及与既有证据的异同",
+      "requirementEn": "Discusses findings, limitations, generalisability and relation to existing knowledge",
+      "guidance": "外推性要回答：换个地区、换个支付方，结论还成立吗？",
+      "riskLevel": "major",
+      "evidenceHint": "讨论章节"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 26 项 · Source of funding",
+      "requirement": "报告资金来源及其在研究设计、分析、解释中的角色",
+      "requirementEn": "Reports funding sources and their role in the study",
+      "guidance": "资金来源与角色分开描述——'药企资助'与'药企决定结论'是两回事。",
+      "riskLevel": "critical",
+      "evidenceHint": "资金声明"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 27 项 · Conflicts of interest",
+      "requirement": "报告所有作者/参与者的利益冲突",
+      "requirementEn": "Reports conflicts of interest for all authors and contributors",
+      "guidance": "期刊硬性要求；缺失该声明会被直接退回。",
+      "riskLevel": "critical",
+      "evidenceHint": "利益冲突声明"
+    },
+    {
+      "clauseRef": "CHEERS 2022 第 28 项 · Impact of study",
+      "requirement": "讨论研究对实践、政策或未来研究的影响（决策的含义）",
+      "requirementEn": "Discusses the impact of the study on practice, policy or future research",
+      "guidance": "回到'谁拿结论做什么决定'：让读者看到下一步。",
+      "riskLevel": "minor",
+      "evidenceHint": "影响讨论"
+    }
+  ]
+}

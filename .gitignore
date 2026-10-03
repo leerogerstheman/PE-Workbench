@@ -1,0 +1,54 @@
+# ---------------------------------------------------------------------------
+# Runtime state, and the key that makes the audit trail tamper-evident.
+#
+# The whole point of `data/audit-chain.key` is that it lives OUTSIDE the
+# database, so that recomputing the hash chain requires a secret the database
+# does not contain. Committing it would hand every reader the ability to forge a
+# chain that verifies, which is the one guarantee this project is built around.
+#
+# `data/*` rather than `data/` on purpose: git does not descend into an ignored
+# directory, so `!data/.gitkeep` only takes effect with the wildcard form.
+# ---------------------------------------------------------------------------
+data/*
+!data/.gitkeep
+!data/.shutdown-token.example
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+audit-chain.key
+
+# Dependencies. There are none at runtime, by design - EU GMP Annex 11 §7.1
+# requires a supplier assessment for every component, and the shortest possible
+# dependency list is the cheapest one to defend. Kept for tooling anyway.
+node_modules/
+
+# Build output. `desktop/PEWorkbench.cs` is the committed source; the desktop
+# launcher is regenerated with `npm run build:desktop`.
+dist/
+PEWorkbench.exe
+Microsoft.Web.WebView2.Core.dll
+Microsoft.Web.WebView2.WinForms.dll
+WebView2Loader.dll
+.cache/
+
+# Runtime working folders (records live in data/, these are convenience dirs)
+logs/
+backups/*
+exports/*
+
+# Editor and OS noise
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and scratch space
+*.log
+npm-debug.log*
+.tmp/
+tmp/

@@ -1,0 +1,127 @@
+{
+  "code": "CHG",
+  "recordPrefix": "CHG",
+  "name": "变更控制（模型/方法/参数）",
+  "nameEn": "Change Control (model / method / parameter)",
+  "category": "quality",
+  "gxpAreas": ["MDL", "ANA", "RST", "CST", "OUT", "EVS"],
+  "regulationRefs": [
+    "中国药物经济学评价指南（2020）第十一章 质量控制（变更管理）",
+    "ISPOR-SMDM Modeling Good Research Practices（版本管理）",
+    "ICH Q10 §3.2.3 change management（精神）"
+  ],
+  "description": "已批准方案、已发布模型、已关闭报告的任何改变都必须走受控变更：申请→影响评估→批准→实施→验证→关闭。变更不是'改一下'，是'证明改完之后仍然成立'。",
+  "descriptionEn": "Any change to an approved protocol, published model or closed report goes through a controlled path: request, impact assessment, approval, implementation, verification, closure. A change is not 'a quick edit' but proof that everything still holds afterwards.",
+  "slaDays": 30,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "under_assessment", "approved", "implemented", "verified", "closed", "cancelled", "rejected"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled", "rejected"],
+
+  "fields": [
+    { "key": "title", "label": "变更标题", "labelEn": "Change title", "type": "text", "required": true },
+    { "key": "summary", "label": "变更目的", "labelEn": "Purpose", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "影响程度", "labelEn": "Impact", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "实施责任人", "labelEn": "Implementation owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "关联研究/药品", "labelEn": "Related study / drug", "type": "text", "required": false }
+  ],
+
+  "steps": [
+    {
+      "code": "request",
+      "name": "变更申请",
+      "nameEn": "Change request",
+      "role": ["heor_researcher", "modeler", "hta_officer", "biostatistician", "evidence_specialist", "data_manager"],
+      "type": "task",
+      "onComplete": "under_assessment",
+      "requiresFields": ["changeType", "rationale"],
+      "form": [
+        { "key": "changeType", "label": "变更类型", "type": "select", "required": true, "options": ["method (方法)", "parameter (参数)", "model structure (模型结构)", "analysis software (软件)", "protocol (方案)", "report (报告)", "data (数据)"] },
+        { "key": "rationale", "label": "变更理由", "type": "textarea", "required": true },
+        { "key": "affectedBaseline", "label": "影响哪些已批准基线（方案/模型版本/报告）", "type": "textarea", "required": true }
+      ],
+      "guidance": "申请必须承认自己改变了什么基线。'因为指南更新把贴现率从 3% 改为 5%'是理由；'这样结果更好看'不是。"
+    },
+    {
+      "code": "impact",
+      "name": "影响评估",
+      "nameEn": "Impact assessment",
+      "role": ["heor_researcher", "biostatistician"],
+      "type": "task",
+      "onComplete": "under_assessment",
+      "requiresFields": ["impactResult"],
+      "persistFields": { "impact_assessment": "impactResult" },
+      "form": [
+        { "key": "impactResult", "label": "对结论/报告/申报的影响评估", "type": "textarea", "required": true },
+        { "key": "conclusionShift", "label": "是否改变经济性结论方向", "type": "select", "required": true, "options": ["no", "yes", "possible"] },
+        { "key": "docsAffected", "label": "受影响文件清单", "type": "textarea", "required": true }
+      ],
+      "guidance": "评估必须回答：改了之后 ICER 会动多少、结论方向会不会翻转、哪些已提交材料需要更新。'possible' 意味着需要重新运行后确认。"
+    },
+    {
+      "code": "approval",
+      "name": "批准",
+      "nameEn": "Approval",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "approved",
+      "onComplete": "approved",
+      "independentOfAuthor": true,
+      "requiresFields": ["approvalNotes"],
+      "form": [
+        { "key": "approvalNotes", "label": "批准意见（含对结论方向变化的处置）", "type": "textarea", "required": true }
+      ],
+      "guidance": "批准人独立于申请人。影响结论方向的变更必须同时明确：重新解释、重出报告、还是撤回申报。"
+    },
+    {
+      "code": "implement",
+      "name": "实施",
+      "nameEn": "Implementation",
+      "role": ["modeler", "heor_researcher", "evidence_specialist", "data_manager"],
+      "type": "task",
+      "onComplete": "implemented",
+      "requiresFields": ["implementationSummary"],
+      "persistFields": { "immediate_action": "implementationSummary" },
+      "form": [
+        { "key": "implementationSummary", "label": "实施内容与产出（新版本号）", "type": "textarea", "required": true },
+        { "key": "rerun", "label": "重算结果摘要", "type": "textarea", "required": true },
+        { "key": "versionRef", "label": "旧/新版本引用", "type": "textarea", "required": true }
+      ],
+      "guidance": "实施永远产生新版本，旧的模型版本与报告版本保持原样归档——审计要求'之前的信息不被抹去'。"
+    },
+    {
+      "code": "verify",
+      "name": "验证",
+      "nameEn": "Verification",
+      "role": ["biostatistician", "heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "verified",
+      "onComplete": "verified",
+      "independentOfAuthor": true,
+      "requiresFields": ["verificationResult"],
+      "form": [
+        { "key": "verificationResult", "label": "验证结论（新旧结果比对）", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "结论", "type": "select", "required": true, "options": ["verified", "deviations_found"] }
+      ],
+      "guidance": "验证人独立复算关键数字。'deviations_found' 时记录回到实施步骤，不能带着差异进入关闭。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "closureNotes", "label": "关闭说明（变更链完整）", "type": "textarea", "required": true },
+        { "key": "propagation", "label": "变更已传播到的报告/申报清单", "type": "textarea", "required": true }
+      ],
+      "guidance": "变更只有在'已传播'——所有受影响文档都更新并重新批准——之后才允许关闭。"
+    }
+  ]
+}

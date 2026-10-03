@@ -1,0 +1,125 @@
+{
+  "code": "CST",
+  "recordPrefix": "CST",
+  "name": "成本分析研究",
+  "nameEn": "Costing & Resource Use Analysis",
+  "category": "costing",
+  "gxpAreas": ["CST", "RSD", "RPT"],
+  "regulationRefs": [
+    "中国药物经济学评价指南（2020）第四章 成本",
+    "ISPOR - Good Practices for Costing",
+    "CHEERS 2022 items 13-14 (costs, currency, price date)"
+  ],
+  "description": "成本侧的受控流程：资源清单先行、单价逐一核实（来源与日期）、按视角核算、敏感性检查、方法学审阅。成本不是数字，是'谁付钱、按什么口径、以什么价格'。",
+  "descriptionEn": "The controlled costing pipeline: resource list first, unit costs verified with sources and dates, perspective-based calculation, sensitivity checks, methodology review.",
+  "slaDays": 45,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "resources", "priced", "calculated", "reviewed", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "分析标题", "labelEn": "Analysis title", "type": "text", "required": true },
+    { "key": "summary", "label": "分析目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "负责人", "labelEn": "Owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品", "labelEn": "Drug", "type": "text", "required": true },
+    { "key": "currency", "label": "币种与价格日期", "labelEn": "Currency & price date", "type": "text", "required": true, "help": "如 CNY，基准价日期 2026-01-01" }
+  ],
+
+  "steps": [
+    {
+      "code": "resource_list",
+      "name": "资源清单",
+      "nameEn": "Resource list",
+      "role": ["heor_researcher", "data_manager", "clinical_advisor"],
+      "type": "task",
+      "onComplete": "resources",
+      "requiresFields": ["resourceItems"],
+      "form": [
+        { "key": "resourceItems", "label": "资源项目清单（用药/住院/门诊/随访/AE 处置/检查）", "type": "textarea", "required": true },
+        { "key": "resourceSource", "label": "资源用量来源（试验/文献/专家/真实世界）", "type": "textarea", "required": true },
+        { "key": "missingItems", "label": "暂缺的项目与计划", "type": "textarea", "required": false }
+      ],
+      "guidance": "先资源后单价：漏掉一项资源（如严重不良事件的处置成本）会在报告评审时才被发现，那时修改的代价是整条链重算。"
+    },
+    {
+      "code": "unit_cost",
+      "name": "单价核实",
+      "nameEn": "Unit cost verification",
+      "role": ["heor_researcher", "data_manager"],
+      "type": "task",
+      "onComplete": "priced",
+      "requiresFields": ["unitCostSource"],
+      "persistFields": { "root_cause": "unitCostSource" },
+      "form": [
+        { "key": "unitCostSource", "label": "单价来源（医保支付价/挂网价/招标价/目录价）", "type": "textarea", "required": true },
+        { "key": "priceDate", "label": "各单价的价格日期", "type": "textarea", "required": true },
+        { "key": "currencyConversion", "label": "币种换算（如需要）", "type": "textarea", "required": false }
+      ],
+      "guidance": "医保谈判的背景方案中，'你的单价从哪来的'是最常见的质询。每一条单价都要能指到文件与日期，且默认用医保支付标准。"
+    },
+    {
+      "code": "calculation",
+      "name": "成本核算",
+      "nameEn": "Cost calculation",
+      "role": ["heor_researcher"],
+      "type": "task",
+      "onComplete": "calculated",
+      "requiresFields": ["costResult"],
+      "persistFields": { "impact_assessment": "costResult" },
+      "form": [
+        { "key": "costResult", "label": "分项与总成本（按视角）", "type": "textarea", "required": true },
+        { "key": "discountApplied", "label": "成本贴现", "type": "text", "required": true },
+        { "key": "calculationFile", "label": "计算文件引用", "type": "text", "required": true }
+      ],
+      "guidance": "视角决定口径：医保支付方视角只计医保基金支出；全社会视角还要计患者自付、生产力损失等。一条成本条目必须同时标注'属于哪个视角'。"
+    },
+    {
+      "code": "sensitivity",
+      "name": "成本敏感性检查",
+      "nameEn": "Cost sensitivity check",
+      "role": ["heor_researcher", "biostatistician"],
+      "type": "task",
+      "onComplete": "reviewed",
+      "requiresFields": ["sensitivityResult"],
+      "form": [
+        { "key": "sensitivityResult", "label": "关键单价波动对总成本的影响", "type": "textarea", "required": true },
+        { "key": "biggestDrivers", "label": "最大成本驱动项", "type": "textarea", "required": true }
+      ],
+      "guidance": "把对总成本影响最大的前三项标出来——它们就是将来谈判与质询的主战场。"
+    },
+    {
+      "code": "review",
+      "name": "方法学审阅",
+      "nameEn": "Methodology review",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "verified",
+      "onComplete": "reviewed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "reviewNotes", "label": "审阅意见", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "结论", "type": "select", "required": true, "options": ["acceptable", "revise"] }
+      ],
+      "guidance": "独立审阅确认：口径与方案一致、单价可溯源、贴现合理。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用（资源表+单价证据+计算文件）", "type": "textarea", "required": true }
+      ],
+      "guidance": "归档必须包含单价证据文件——证据不在系统里，等于单价不存在。"
+    }
+  ]
+}

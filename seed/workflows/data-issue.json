@@ -1,0 +1,101 @@
+{
+  "code": "DISS",
+  "recordPrefix": "DISS",
+  "name": "数据完整性问题",
+  "nameEn": "Data Integrity Issue",
+  "category": "quality",
+  "gxpAreas": ["EVS", "OUT", "CST", "MDL", "ANA", "RPT"],
+  "regulationRefs": [
+    "ALCOA+ principles (WHO TRS 1033 Annex 4, PIC/S PI 041)",
+    "中国药物经济学评价指南（2020）第十一章 质量控制",
+    "ICH E6(R2) / GxP 数据完整性（分析数据的同一纪律）"
+  ],
+  "description": "分析数据出现问题时（重复计数、单位错误、贴错标签、记录丢失）的受控处理：识别分级→偏倚影响评估→纠正与预防→QA 独立关闭。提出人不能自己关闭。",
+  "descriptionEn": "Controlled handling when analysis data goes wrong (double counting, unit errors, mislabelling, lost records): identification and grading, bias impact assessment, correction and prevention, independent QA closure. The reporter cannot close it.",
+  "slaDays": 30,
+  "requiresRootCause": true,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "identified", "under_assessment", "corrected", "qa_review", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "问题标题", "labelEn": "Issue title", "type": "text", "required": true },
+    { "key": "summary", "label": "问题描述", "labelEn": "Problem statement", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "严重程度", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "整改责任人", "labelEn": "Action owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "关联研究/药品", "labelEn": "Related study / drug", "type": "text", "required": false }
+  ],
+
+  "steps": [
+    {
+      "code": "identify",
+      "name": "问题识别与分级",
+      "nameEn": "Identification & grading",
+      "role": ["heor_researcher", "modeler", "data_manager", "biostatistician", "evidence_specialist"],
+      "type": "task",
+      "onComplete": "identified",
+      "requiresFields": ["impactOn"],
+      "form": [
+        { "key": "impactOn", "label": "受影响对象（记录/模型/报告）", "type": "textarea", "required": true },
+        { "key": "howFound", "label": "发现方式（自查/复核/外部质询）", "type": "textarea", "required": true },
+        { "key": "immediateAction", "label": "立即措施（防扩散）", "type": "textarea", "required": true }
+      ],
+      "guidance": "识别越早越好——'发现方式'字段提醒你：发现渠道本身是质量体系有效性的证据，不要隐瞒自查发现。立即措施阻止问题扩散，不等调查完成。"
+    },
+    {
+      "code": "assessment",
+      "name": "偏倚影响评估",
+      "nameEn": "Bias impact assessment",
+      "role": ["biostatistician", "heor_researcher"],
+      "type": "task",
+      "onComplete": "under_assessment",
+      "requiresFields": ["biasDirection", "affectedRecords"],
+      "persistFields": { "impact_assessment": "biasDirection" },
+      "form": [
+        { "key": "biasDirection", "label": "偏倚方向（高估/低估/方向不定）", "type": "select", "required": true, "options": ["overestimate (高估获益/低估成本)", "underestimate", "unknown direction", "no material effect"] },
+        { "key": "affectedRecords", "label": "受影响记录/结果清单", "type": "textarea", "required": true },
+        { "key": "magnitude", "label": "偏倚大小估计", "type": "textarea", "required": true }
+      ],
+      "guidance": "核心问题不是'有没有错'而是'偏了多少、往哪个方向偏'：方向决定结论是否被推翻，大小决定是否需要重新运行分析。"
+    },
+    {
+      "code": "correction",
+      "name": "纠正与预防",
+      "nameEn": "Correction & prevention",
+      "role": ["heor_researcher", "modeler", "data_manager", "evidence_specialist"],
+      "type": "task",
+      "onComplete": "corrected",
+      "requiresFields": ["rootCause", "actions"],
+      "persistFields": { "root_cause": "rootCause", "effectiveness_check": "actions" },
+      "form": [
+        { "key": "rootCause", "label": "根本原因", "type": "textarea", "required": true },
+        { "key": "method", "label": "分析方法", "type": "select", "required": true, "options": ["5 Whys", "鱼骨图", "流程复盘", "FMEA", "Is-Is Not"] },
+        { "key": "actions", "label": "纠正与预防措施（逐条+责任人+期限）", "type": "textarea", "required": true },
+        { "key": "recomputation", "label": "重新计算结果与原结果的差异", "type": "textarea", "required": true }
+      ],
+      "guidance": "针对根本原因而不是现象。'加强复核'不是措施……'在成本表增加单位校验并全员培训+两周内回查全部 12 个模型'才是。重新计算的结果差异要明示：它决定已提交材料是否需要撤回。"
+    },
+    {
+      "code": "qa_closure",
+      "name": "QA 独立关闭",
+      "nameEn": "Independent QA closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "requiresFields": ["verification"],
+      "persistFields": { "effectiveness_result": "verification" },
+      "form": [
+        { "key": "verification", "label": "核实记录（纠正有效性+结论重述）", "type": "textarea", "required": true },
+        { "key": "residualRisk", "label": "残余风险", "type": "textarea", "required": false },
+        { "key": "reportImpact", "label": "对已发布报告/申报的影响结论", "type": "textarea", "required": true }
+      ],
+      "guidance": "只有 QA 能关闭，且必须独立于提出人。'影响已发布的报告吗'必须被显式回答：影响为是不撤回的理由要写出来。"
+    }
+  ]
+}

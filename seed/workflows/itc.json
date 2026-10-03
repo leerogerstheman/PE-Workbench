@@ -1,0 +1,125 @@
+{
+  "code": "ITC",
+  "recordPrefix": "ITC",
+  "name": "间接治疗比较 / 网络荟萃分析",
+  "nameEn": "Indirect Treatment Comparison / Network Meta-Analysis",
+  "category": "evidence",
+  "gxpAreas": ["EVS", "ANA"],
+  "regulationRefs": [
+    "ISPOR - Indirect Treatment Comparisons Good Research Practices",
+    "NICE DSU Technical Support Documents (TSD 2, 6)",
+    "中国药物经济学评价指南（2020）第三章 数据来源（间接比较）"
+  ],
+  "description": "无头对头证据时的标准替代路径：分析方案先行、NMA 运行、一致性检验、结果报告、统计学审核。间接比较的结论强度取决于其假设（传递性）是否成立。",
+  "descriptionEn": "The controlled path for indirect comparisons: protocol first, NMA runs, consistency checks, reporting, statistical review. Strength of conclusions depends on the transitivity assumption.",
+  "slaDays": 45,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "protocol_reviewed", "analysis", "consistency", "report", "stat_reviewed", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "分析标题", "labelEn": "Analysis title", "type": "text", "required": true },
+    { "key": "summary", "label": "分析目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "负责人", "labelEn": "Owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品", "labelEn": "Drug", "type": "text", "required": true }
+  ],
+
+  "steps": [
+    {
+      "code": "protocol",
+      "name": "分析方案确认",
+      "nameEn": "Analysis protocol",
+      "role": ["evidence_specialist", "biostatistician"],
+      "type": "task",
+      "onComplete": "protocol_reviewed",
+      "requiresFields": ["network", "method", "priors"],
+      "form": [
+        { "key": "network", "label": "证据网络（节点与可用的头对头证据）", "type": "textarea", "required": true },
+        { "key": "method", "label": "方法（Bucher 调整间接比较 / NMA 固定效应 / 随机效应）", "type": "select", "required": true, "options": ["Bucher ITC", "NMA fixed effect", "NMA random effect", "ML-NMR", "其他"] },
+        { "key": "priors", "label": "先验设定（贝叶斯时）", "type": "textarea", "required": false },
+        { "key": "transitivity", "label": "传递性假设论证", "type": "textarea", "required": true },
+        { "key": "software", "label": "软件与版本", "type": "text", "required": true }
+      ],
+      "guidance": "间接比较的命门是传递性假设：各试验人群、设计与结局定义必须足够相似。方案里必须显式论证这一点。"
+    },
+    {
+      "code": "analysis",
+      "name": "数据分析运行",
+      "nameEn": "Run analysis",
+      "role": ["biostatistician"],
+      "type": "task",
+      "onComplete": "analysis",
+      "requiresFields": ["results"],
+      "form": [
+        { "key": "results", "label": "分析结果（效应量表）", "type": "textarea", "required": true },
+        { "key": "convergence", "label": "收敛诊断", "type": "textarea", "required": false },
+        { "key": "scriptRef", "label": "脚本/代码引用", "type": "text", "required": true }
+      ],
+      "guidance": "脚本必须可复现并归档。'结果'不是从软件窗口复制一段文字，而是可重新运行的代码产物。"
+    },
+    {
+      "code": "consistency",
+      "name": "一致性检验",
+      "nameEn": "Consistency check",
+      "role": ["biostatistician", "evidence_specialist"],
+      "type": "task",
+      "onComplete": "consistency",
+      "requiresFields": ["consistencyResult", "heterogeneity"],
+      "persistFields": { "effectiveness_check": "consistencyResult" },
+      "form": [
+        { "key": "consistencyResult", "label": "一致性检验结论", "type": "select", "required": true, "options": ["consistent", "inconsistent", "not_assessable"] },
+        { "key": "heterogeneity", "label": "异质性评估（I² 等）", "type": "textarea", "required": true },
+        { "key": "loopSpecific", "label": "环路特异性检验", "type": "textarea", "required": false }
+      ],
+      "guidance": "一致性不成立时，先别'修'结果——回到方案：是不是传递性假设不成立？这就是方案早批的价值。"
+    },
+    {
+      "code": "report",
+      "name": "结果报告",
+      "nameEn": "Results report",
+      "role": ["evidence_specialist", "heor_researcher"],
+      "type": "task",
+      "onComplete": "stat_reviewed",
+      "requiresFields": ["reportSummary"],
+      "form": [
+        { "key": "reportSummary", "label": "报告摘要（含网络图与森林图引用）", "type": "textarea", "required": true },
+        { "key": "limitations", "label": "局限（含未检验假设）", "type": "textarea", "required": true }
+      ],
+      "guidance": "报告里必须回答：比较的是哪些治疗、网络是否闭合、结论对假设的敏感度如何。"
+    },
+    {
+      "code": "stat_review",
+      "name": "统计学审核",
+      "nameEn": "Statistical review",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "verified",
+      "onComplete": "stat_reviewed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "reviewNotes", "label": "审核意见", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "结论", "type": "select", "required": true, "options": ["acceptable", "revise"] }
+      ],
+      "guidance": "审核人独立于分析执行者。间接比较结果将直接进入模型与报告，这里是最后一道统计学闸门。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用（数据+脚本+报告）", "type": "textarea", "required": true }
+      ],
+      "guidance": "数据、脚本、报告三者一并归档；缺少任一项不得关闭。"
+    }
+  ]
+}

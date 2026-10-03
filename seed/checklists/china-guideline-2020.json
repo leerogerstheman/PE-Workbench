@@ -1,0 +1,143 @@
+{
+  "code": "CN-GUIDELINE-2020",
+  "title": "中国药物经济学评价指南（2020版）关键要求自查表",
+  "titleEn": "China Guidelines for Pharmacoeconomic Evaluations (2020) - Key Requirements",
+  "scope": "report_assessment",
+  "category": "reporting",
+  "gxpAreas": ["RSD", "CST", "OUT", "ANA", "RPT"],
+  "regulation": "中国药物经济学评价指南（2020版），中国药学会药物经济学专业委员会编",
+  "authority": "中国药学会药物经济学专业委员会",
+  "version": "2020 版；本项目条目为依据指南要点拟定的自查断言，使用时请与指南原文核对",
+  "description": "面向中国医保准入与卫生技术评估场景的合规自查：研究问题与视角、设计、数据来源、成本、健康产出与效用、贴现、增量分析、敏感性分析、预算影响、报告规范与伦理。",
+  "descriptionEn": "Compliance self-assessment for China reimbursement and HTA scenarios, following the 2020 edition of the China Pharmacoeconomic Evaluation Guidelines.",
+  "items": [
+    {
+      "clauseRef": "中国指南 2020 · 一、研究问题与研究设计",
+      "requirement": "研究问题按 PICO 框架明确陈述，分析类型（CEA/CUA/CBA/CMA/BIA）与研究设计（前瞻/回顾/模型）有据可依并与决策场景匹配",
+      "requirementEn": "Research question stated in PICO form; analysis type and design justified and matched to the decision context",
+      "guidance": "医保准入类评估通常以医保支付方视角的 CUA + BIA 组合呈现。",
+      "riskLevel": "critical",
+      "evidenceHint": "PICO 陈述与设计章节"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 一、研究视角",
+      "requirement": "明确研究视角（全社会/医保支付方/医疗机构/患者）并据此确定成本与产出口径",
+      "requirementEn": "Perspective stated (societal/payer/hospital/patient) and cost & outcome scopes consistent with it",
+      "guidance": "视角决定一切口径；混用视角是评审常见否决点。",
+      "riskLevel": "critical",
+      "evidenceHint": "视角声明与口径表"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 二、数据来源",
+      "requirement": "数据来源明确并分级：随机对照研究、观察性研究、真实世界数据、专家意见；优先使用高质量证据",
+      "requirementEn": "Data sources identified and graded; higher-quality evidence preferred",
+      "guidance": "证据分级要能接受质询：为什么用这项研究的疗效数据而不是另一项。",
+      "riskLevel": "major",
+      "evidenceHint": "数据来源表与分级"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 三、成本",
+      "requirement": "成本识别完整（直接医疗/直接非医疗/间接成本视视角而定），计量与估价可溯源，币种与价格日期明确",
+      "requirementEn": "Costs identified completely, measured and valued traceably, with currency and price date",
+      "guidance": "中国场景常用的价格口径：医保支付标准、挂网价、招标价。",
+      "riskLevel": "critical",
+      "evidenceHint": "成本识别-计量-估价三节"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 四、健康产出",
+      "requirement": "健康产出选择与测量方法明确：效果（临床指标）/效用（QALY）/效益（货币化），测量工具与来源说明",
+      "requirementEn": "Health outcomes chosen and measured explicitly (effects/utilities/benefits)",
+      "guidance": "CUA 为主流：效用测量需说明量表与价值集。",
+      "riskLevel": "major",
+      "evidenceHint": "产出章节"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 四、效用测量",
+      "requirement": "效用值测量说明量表、人群、价值集（推荐使用中国人群偏好构建的价值集）",
+      "requirementEn": "Utility measurement specifies instrument, population and value set (Chinese value set preferred)",
+      "guidance": "EQ-5D-5L 中国价值集是常见推荐；使用他国价值集须说明理由。",
+      "riskLevel": "critical",
+      "evidenceHint": "价值集引用与理由"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 五、贴现",
+      "requirement": "成本和健康产出按指南建议进行贴现（成本与效果同率），基线与敏感性分析清楚",
+      "requirementEn": "Costs and outcomes discounted per guideline recommendations, base case and sensitivity explicit",
+      "guidance": "时间范围超过 1 年必须贴现；指南对贴现率有建议区间，需随指南更新核对。",
+      "riskLevel": "major",
+      "evidenceHint": "贴现声明"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 六、结果分析（增量分析）",
+      "requirement": "以增量分析报告结果：增量成本、增量效果、ICER/INMB，四象限明确",
+      "requirementEn": "Results reported incrementally: incremental cost, incremental effect, ICER/INMB, quadrant stated",
+      "guidance": "占优/被占优/权衡三种情形的表述各有规范。",
+      "riskLevel": "critical",
+      "evidenceHint": "增量分析表"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 六、敏感性分析（确定性）",
+      "requirement": "不确定性分析包含确定性敏感性分析（单因素/多因素），关键参数范围有依据",
+      "requirementEn": "Deterministic sensitivity analysis (one-way/multi-way) with justified parameter ranges",
+      "guidance": "龙卷风图是标配；参数范围必须有来源（CI、文献范围、专家范围）。",
+      "riskLevel": "major",
+      "evidenceHint": "DSA 结果与参数范围"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 六、概率敏感性分析",
+      "requirement": "模型类研究进行概率敏感性分析（PSA），参数分布设定合理，报告可接受曲线与期望值",
+      "requirementEn": "Probabilistic sensitivity analysis with reasonable distributions; acceptability curve and EV expected values reported",
+      "guidance": "PSA 模拟次数与分布设定需说明；可接受曲线以阈值为横轴。",
+      "riskLevel": "major",
+      "evidenceHint": "PSA 设定与结果"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 七、亚组与异质性",
+      "requirement": "亚组分析事先定义（避免事后挑选），异质性来源说明",
+      "requirementEn": "Subgroup analyses pre-specified; heterogeneity sources explained",
+      "guidance": "医保测算常关注特定人群（如老年、合并症）的经济性差异。",
+      "riskLevel": "minor",
+      "evidenceHint": "亚组章节"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 八、预算影响分析",
+      "requirement": "预算影响分析符合良好实践：目标人群、市场份额情景、3-5 年、增量视角、敏感性",
+      "requirementEn": "Budget impact analysis follows good practice: population, share scenarios, 3-5 years, incremental, sensitivity",
+      "guidance": "医保谈判测算文件中 BIA 的完整性与可复核性直接决定谈判基础。",
+      "riskLevel": "critical",
+      "evidenceHint": "BIA 报告章节"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 九、报告与结论",
+      "requirement": "报告结构完整（背景、方法、结果、讨论、局限），结论与结果一致，未过度外推",
+      "requirementEn": "Report complete in structure; conclusions consistent with results; no over-generalisation",
+      "guidance": "结论句必须能被结果表支持——'具有经济性'需附阈值语境。",
+      "riskLevel": "major",
+      "evidenceHint": "结论章节与结果一致性"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 十、质量控制与可溯源性",
+      "requirement": "分析过程受控：脚本/计算文件可复现、版本可追溯、复核有记录",
+      "requirementEn": "Analytical process controlled: reproducible scripts, traceable versions, documented review",
+      "guidance": "指南第十一章质量控制：独立复核、版本管理、偏差处理。",
+      "riskLevel": "critical",
+      "evidenceHint": "复核记录与版本引用"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 十一、利益冲突与伦理",
+      "requirement": "声明研究资助来源、作者利益冲突与伦理审批（如涉及患者数据）",
+      "requirementEn": "Funding, conflicts of interest and ethical approval declared",
+      "guidance": "资助方在研究中的角色必须透明。",
+      "riskLevel": "major",
+      "evidenceHint": "声明段落"
+    },
+    {
+      "clauseRef": "中国指南 2020 · 术语与参数规范",
+      "requirement": "术语使用符合指南定义（QALY/ICER/INMB/WTP 等），参数表达规范（均值、范围、分布）",
+      "requirementEn": "Terminology and parameter expressions follow the guideline definitions",
+      "guidance": "如 QALY 计算式、贴现率表达、ICER 单位（元/QALY）统一。",
+      "riskLevel": "minor",
+      "evidenceHint": "术语表与参数表"
+    }
+  ]
+}

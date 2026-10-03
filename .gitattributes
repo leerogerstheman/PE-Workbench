@@ -1,0 +1,13 @@
+# The batch files are deliberately pure ASCII with CRLF endings. cmd.exe is
+# unreliable with LF-only batch files, so without this pin a clone on a machine
+# with `core.autocrlf=input` would check them out as LF and the documented
+# one-click entry point could silently misbehave.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never let git attempt line-ending conversion or text diffs on binaries
+*.exe binary
+*.db binary
+*.png binary
+*.jpg binary
+*.ico binary

@@ -1,0 +1,161 @@
+{
+  "code": "MODEL",
+  "recordPrefix": "MODEL",
+  "name": "经济模型开发与验证",
+  "nameEn": "Economic Model Development & Validation",
+  "category": "modeling",
+  "gxpAreas": ["MDL", "ANA", "RPT"],
+  "regulationRefs": [
+    "ISPOR-SMDM Modeling Good Research Practices Task Force reports (Model Transparency & Validation - the seven questions)",
+    "ISPOR - State Transition Modeling Good Research Practices",
+    "中国药物经济学评价指南（2020）第七章 模型分析"
+  ],
+  "description": "经济模型是整套分析里'看不见的机器'，因此它的每一步都受控：结构设计→结构评审→参数集→编码实现→内部验证（ISPOR-SMDM 七问）→独立外审→版本批准发布。模型不能由开发者独自放行。",
+  "descriptionEn": "The model is the invisible machine of the analysis, so every step is controlled: structure design, structure review, parameters, coding, internal validation (ISPOR-SMDM seven questions), independent external review, version approval and publication.",
+  "slaDays": 90,
+  "requiresRootCause": false,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "structure_reviewed", "parameterized", "coded", "internally_validated", "externally_reviewed", "published", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "模型标题", "labelEn": "Model title", "type": "text", "required": true },
+    { "key": "summary", "label": "模型目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "模型负责人", "labelEn": "Model owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品", "labelEn": "Drug", "type": "text", "required": true },
+    { "key": "modelType", "label": "模型类型", "labelEn": "Model type", "type": "select", "required": true, "options": ["decision tree (决策树)", "Markov cohort (队列马尔可夫)", "partitioned survival (分区生存)", "individual-level simulation (个体水平模拟)", "半 Markov/其他"] },
+    { "key": "software", "label": "实现软件与版本", "labelEn": "Software & version", "type": "text", "required": true, "help": "如 R 4.4 / Excel / TreeAge / 自研" },
+    { "key": "version", "label": "模型版本", "labelEn": "Model version", "type": "text", "required": true }
+  ],
+
+  "steps": [
+    {
+      "code": "structure",
+      "name": "模型结构设计",
+      "nameEn": "Model structure design",
+      "role": ["modeler"],
+      "type": "task",
+      "onComplete": "structure_reviewed",
+      "requiresFields": ["states", "cycleLength", "structureDiagram"],
+      "form": [
+        { "key": "structureDiagram", "label": "结构图/状态转移图引用", "type": "text", "required": true },
+        { "key": "states", "label": "健康状态清单", "type": "textarea", "required": true },
+        { "key": "cycleLength", "label": "循环周期", "type": "text", "required": true, "help": "如：1 个月 / 1 年，并说明理由" },
+        { "key": "structureAssumptions", "label": "结构假设（简化了什么、为什么允许）", "type": "textarea", "required": true }
+      ],
+      "guidance": "结构先行于参数：先证明'这台机器长这样是合理的'，再谈往里面填什么数。结构假设必须逐条写出，包括'我们简化了什么'。"
+    },
+    {
+      "code": "structure_review",
+      "name": "结构评审",
+      "nameEn": "Structure review",
+      "role": ["clinical_advisor", "heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "reviewed",
+      "onComplete": "structure_reviewed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "reviewNotes", "label": "结构评审意见（临床与经济学合理性）", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "结论", "type": "select", "required": true, "options": ["approved", "revise"] }
+      ],
+      "guidance": "临床顾问确认状态与结局符合疾病自然史；负责人确认结构能回答 PICO。结构错了，后面的一切都是精密的错误。"
+    },
+    {
+      "code": "parameters",
+      "name": "参数集",
+      "nameEn": "Parameter set",
+      "role": ["modeler", "heor_researcher"],
+      "type": "task",
+      "onComplete": "parameterized",
+      "requiresFields": ["parameterTable"],
+      "form": [
+        { "key": "parameterTable", "label": "参数表（名称/值/分布/来源）", "type": "textarea", "required": true },
+        { "key": "parameterSources", "label": "参数来源分级（试验/文献/专家/假设）", "type": "textarea", "required": true },
+        { "key": "correlations", "label": "参数相关性与 PSA 设定", "type": "textarea", "required": false }
+      ],
+      "guidance": "每个参数都要能回答三个问题：值是什么、分布是什么、从哪来。'专家假设'不是错误，但必须被明确标注而不是混在证据参数里。"
+    },
+    {
+      "code": "coding",
+      "name": "模型编码与实现",
+      "nameEn": "Coding & implementation",
+      "role": ["modeler"],
+      "type": "task",
+      "onComplete": "coded",
+      "requiresFields": ["codeRef", "outputCheck"],
+      "form": [
+        { "key": "codeRef", "label": "代码/文件引用与版本控制", "type": "text", "required": true },
+        { "key": "outputCheck", "label": "输出合理性初检（与文献结果对比）", "type": "textarea", "required": true },
+        { "key": "debugLog", "label": "调试记录", "type": "textarea", "required": false }
+      ],
+      "guidance": "代码进版本控制（每次运行都有哈希引用）。'输出合理性初检'是第一道网：如果模型预测的总生存与已发表数据差一倍，先别往下走。"
+    },
+    {
+      "code": "internal_validation",
+      "name": "内部验证（ISPOR-SMDM 七问）",
+      "nameEn": "Internal validation (ISPOR-SMDM 7 questions)",
+      "role": ["modeler", "biostatistician"],
+      "type": "task",
+      "onComplete": "internally_validated",
+      "requiresFields": ["validationItems", "validationResult"],
+      "persistFields": { "effectiveness_check": "validationResult" },
+      "form": [
+        { "key": "validationItems", "label": "验证清单逐条结论（按检查表 ISPOR-SMDM-MODEL）", "type": "textarea", "required": true },
+        { "key": "validationResult", "label": "验证结论（通过/有条件通过/不通过）", "type": "select", "required": true, "options": ["passed", "passed_with_conditions", "failed"] },
+        { "key": "validationEvidence", "label": "验证证据（数值核对/外部对照）", "type": "textarea", "required": true }
+      ],
+      "guidance": "用 ISPOR-SMDM 七问逐条自证：结构透明吗？输入输出可描述吗？数值核对过吗（单元测试/交叉核对）？外部数据对得上吗？独立方能复现吗？验证不过的模型不能进入下一步。"
+    },
+    {
+      "code": "external_review",
+      "name": "独立外审",
+      "nameEn": "Independent external review",
+      "role": ["heor_qa", "heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "reviewed",
+      "onComplete": "externally_reviewed",
+      "independentOfAuthor": true,
+      "requiresFields": ["reviewConclusion"],
+      "form": [
+        { "key": "reviewConclusion", "label": "外审结论与遗留问题", "type": "textarea", "required": true },
+        { "key": "issuesResolved", "label": "遗留问题处置", "type": "textarea", "required": true }
+      ],
+      "guidance": "外审者不参与建模，检查的是结果本身：数字经得起独立复算吗？遗留问题必须写明处置，'未处理'必须显式声明。"
+    },
+    {
+      "code": "publish",
+      "name": "版本批准发布",
+      "nameEn": "Version approval & publication",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "approved",
+      "onComplete": "published",
+      "independentOfAuthor": true,
+      "requiresFields": ["publishNotes"],
+      "persistFields": { "study_code": "publishNotes" },
+      "form": [
+        { "key": "publishNotes", "label": "发布声明（版本、日期、适用范围）", "type": "textarea", "required": true }
+      ],
+      "guidance": "发布即锁定：发布后的版本是报告与申报引用的唯一基线。任何参数或结构变化都必须走变更控制（CHG）产生新版本。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用（代码+参数+验证证据+外审记录）", "type": "textarea", "required": true }
+      ],
+      "guidance": "模型 + 参数 + 验证证据三件套归档。归档后模型仍可被 CHG 修订，但历史版本永久保留。"
+    }
+  ]
+}

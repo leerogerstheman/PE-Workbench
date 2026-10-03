@@ -1,0 +1,112 @@
+{
+  "code": "PROTO",
+  "recordPrefix": "PROTO",
+  "name": "研究方案与健康经济学分析计划（HEAP）",
+  "nameEn": "Study Protocol & Health Economic Analysis Plan (HEAP)",
+  "category": "design",
+  "gxpAreas": ["RSD", "RPT"],
+  "regulationRefs": [
+    "ISPOR - Health Economic Analysis Plan (HEAP) Good Research Practices",
+    "中国药物经济学评价指南（2020）第一章 研究问题与研究设计",
+    "CHEERS 2022 item 4 - health economic analysis plan"
+  ],
+  "description": "把要回答的决策问题写成受控方案：PICO、分析类型、视角、时间范围、贴现率、亚组与结局。方案先行，先想后算；未经批准的分析不允许进入正式记录。",
+  "descriptionEn": "Turns the decision question into a controlled protocol: PICO, analysis type, perspective, time horizon, discount rate, subgroups and outcomes. Design first, calculate second.",
+  "slaDays": 30,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "in_review", "approved", "in_amendment", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "方案标题", "labelEn": "Protocol title", "type": "text", "required": true },
+    { "key": "summary", "label": "研究目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "方案负责人", "labelEn": "Protocol owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品/技术", "labelEn": "Drug / technology", "type": "text", "required": true },
+    { "key": "pico", "label": "PICO 研究问题", "labelEn": "PICO question", "type": "textarea", "required": false, "help": "Population / Intervention / Comparator / Outcome，逐项写明" },
+    { "key": "analysisType", "label": "分析类型", "labelEn": "Analysis type", "type": "select", "required": true, "options": ["cost-effectiveness (CEA)", "cost-utility (CUA)", "cost-benefit (CBA)", "cost-minimization (CMA)", "budget impact (BIA)"] },
+    { "key": "perspective", "label": "分析视角", "labelEn": "Perspective", "type": "select", "required": true, "options": ["payer (医保支付方)", "healthcare system (卫生体系)", "societal (全社会)", "hospital (医疗机构)", "patient (患者)"] },
+    { "key": "timeHorizon", "label": "时间范围", "labelEn": "Time horizon", "type": "text", "required": true, "help": "如：终身 / 10 年 / 5 年，须说明理由" },
+    { "key": "discountRate", "label": "贴现率", "labelEn": "Discount rate", "type": "text", "required": true, "help": "如 3% 或 5%，并注明来源依据" }
+  ],
+
+  "steps": [
+    {
+      "code": "draft_protocol",
+      "name": "起草方案",
+      "nameEn": "Draft protocol",
+      "role": ["heor_researcher", "hta_officer", "modeler"],
+      "type": "task",
+      "onComplete": "in_review",
+      "requiresFields": ["pico", "perspective", "timeHorizon", "discountRate"],
+      "form": [
+        { "key": "pico", "label": "PICO 细化", "type": "textarea", "required": true },
+        { "key": "decisionContext", "label": "决策背景（谁用结论做什么决定）", "type": "textarea", "required": true },
+        { "key": "dataSources", "label": "拟用数据来源", "type": "textarea", "required": true, "help": "临床试验、文献、真实世界数据、费用目录等" },
+        { "key": "limitationsPlanned", "label": "预判局限与处理", "type": "textarea", "required": false }
+      ],
+      "guidance": "方案是分析的宪法：先写清楚'谁、拿什么结论、做什么决定'，再谈方法。未写清 PICO 的方案进入评审会被退回。"
+    },
+    {
+      "code": "methodology_review",
+      "name": "方法学评审",
+      "nameEn": "Methodology review",
+      "role": ["heor_lead", "biostatistician", "clinical_advisor"],
+      "type": "task",
+      "onComplete": "approved",
+      "form": [
+        { "key": "reviewComments", "label": "评审意见（逐条）", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "评审结论", "type": "select", "required": true, "options": ["pass_with_comments", "revise", "reject"] }
+      ],
+      "guidance": "评审者独立于起草者。结论为 revise 时记录留在评审态，起草者修订后重新提交评审。"
+    },
+    {
+      "code": "approval",
+      "name": "方案批准",
+      "nameEn": "Protocol approval",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "approved",
+      "onComplete": "approved",
+      "form": [
+        { "key": "approvalNotes", "label": "批准意见", "type": "textarea", "required": true }
+      ],
+      "guidance": "批准意味着：方案所载方法成为后续分析与报告必须遵循的基线。后续偏离必须走变更控制（CHG）。"
+    },
+    {
+      "code": "amendment",
+      "name": "方案修订",
+      "nameEn": "Protocol amendment",
+      "role": ["heor_researcher", "hta_officer", "modeler"],
+      "type": "task",
+      "onComplete": "in_review",
+      "optional": true,
+      "requiresFields": ["amendmentReason"],
+      "persistFields": { "immediate_action": "amendmentReason" },
+      "form": [
+        { "key": "amendmentReason", "label": "修订原因", "type": "textarea", "required": true },
+        { "key": "amendmentDetail", "label": "修订内容", "type": "textarea", "required": true }
+      ],
+      "guidance": "修订必须回答：为什么当初的方案错了、修订是否影响已产生的结果。修订后重新走方法学评审。"
+    },
+    {
+      "code": "closure",
+      "name": "结案归档",
+      "nameEn": "Closure & archive",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "finalCheck", "label": "归档核查结论", "type": "textarea", "required": true },
+        { "key": "filesRef", "label": "归档文件引用", "type": "textarea", "required": true }
+      ],
+      "guidance": "方案、评审意见、批准签名全部归档。作者本人不能关闭自己的方案（独立性原则）。"
+    }
+  ]
+}

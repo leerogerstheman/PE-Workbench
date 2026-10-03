@@ -1,0 +1,119 @@
+{
+  "code": "ISPOR-SMDM-MODEL",
+  "title": "经济模型透明度与验证自查表（ISPOR-SMDM）",
+  "titleEn": "Model Transparency & Validation Checklist (ISPOR-SMDM)",
+  "scope": "model_validation",
+  "category": "modeling",
+  "gxpAreas": ["MDL", "ANA", "RPT"],
+  "regulation": "ISPOR-SMDM Modeling Good Research Practices Task Force - Model Transparency and Validation (Value in Health 2012; updated practices in subsequent task force reports)",
+  "authority": "ISPOR-SMDM Modeling Good Research Practices Task Force",
+  "version": "以任务组'模型透明度七问'框架与该系列建模良好实践报告为蓝本拟定的自查断言",
+  "description": "经济模型发布前的透明性与验证自查：围绕 ISPOR-SMDM 模型透明度七问展开，并补充内部验证实践（单元测试、交叉核对、外部校准、情景压力测试、代码审查）。模型不通过本表不得发布。",
+  "descriptionEn": "Pre-publication transparency and validation checklist for economic models, centred on the ISPOR-SMDM seven questions plus internal verification practice items.",
+  "items": [
+    {
+      "clauseRef": "透明性七问 Q1 · 结构透明",
+      "requirement": "模型的结构、假设与数据输入能够被决策者理解：结构图、状态定义、转移规则、简化假设全部显式文档化",
+      "requirementEn": "Model structure, assumptions and inputs are explicitly documented and understandable by decision makers",
+      "guidance": "自问：一个没参与开发的评审人，只读文档能否画出模型的结构图？",
+      "riskLevel": "critical",
+      "evidenceHint": "结构文档与图示"
+    },
+    {
+      "clauseRef": "透明性七问 Q2 · 输入输出可描述",
+      "requirement": "全部输入（参数及其来源）与输出（结果指标）可逐项描述，无不透明硬编码",
+      "requirementEn": "All inputs and outputs are individually describable; no undocumented hard-coding",
+      "guidance": "检查代码/表格中是否存在没有注释的魔法数字。",
+      "riskLevel": "critical",
+      "evidenceHint": "参数表与代码注释"
+    },
+    {
+      "clauseRef": "透明性七问 Q3 · 结构假设合理",
+      "requirement": "结构假设（疾病过程、治疗路径、周期长度、无记忆性等）显式陈述并与临床与经济学常识一致",
+      "requirementEn": "Structural assumptions are explicit and reasonable against clinical and economic knowledge",
+      "guidance": "Markov 无记忆假设、周期长度选择都要论证。",
+      "riskLevel": "critical",
+      "evidenceHint": "假设清单与论证"
+    },
+    {
+      "clauseRef": "透明性七问 Q4 · 数值正确（内部验证）",
+      "requirement": "模型的数学实现经验证无误：单元测试、极端值检验、与手算/独立计算交叉核对",
+      "requirementEn": "Numerical implementation verified: unit tests, boundary checks, cross-checks with independent calculation",
+      "guidance": "例：把转移概率设为 0/1 看模型是否给出常识性结果；同一输出用独立工具重算。",
+      "riskLevel": "critical",
+      "evidenceHint": "单元测试记录与交叉核对表"
+    },
+    {
+      "clauseRef": "透明性七问 Q5 · 与外部数据对照",
+      "requirement": "模型预测与外部数据（临床试验、真实世界、已发表模型）对照，差异有解释",
+      "requirementEn": "Model predictions compared against external data with explanation of differences",
+      "guidance": "如模型预测的总生存曲线与试验报告的中位生存差异需要解释。",
+      "riskLevel": "critical",
+      "evidenceHint": "外部对照结果"
+    },
+    {
+      "clauseRef": "透明性七问 Q6 · 决策适用性",
+      "requirement": "模型能力与决策问题匹配：比较的方案、结局、视角、时间范围覆盖决策需要",
+      "requirementEn": "The model can answer the decision question: comparators, outcomes, perspective, horizon covered",
+      "guidance": "模型再精巧，答非所问也不能用。回到 PICO 逐项核对。",
+      "riskLevel": "major",
+      "evidenceHint": "与 PICO 的映射表"
+    },
+    {
+      "clauseRef": "透明性七问 Q7 · 可复现性",
+      "requirement": "独立方能够复现模型结果：代码、参数、随机种子、环境全部可获取",
+      "requirementEn": "Independent parties can reproduce results: code, parameters, seeds, environment available",
+      "guidance": "检查清单：代码仓库、运行环境（R 版本/包版本/Excel 配置）、随机种子、输出归档。",
+      "riskLevel": "critical",
+      "evidenceHint": "复现手册与代码引用"
+    },
+    {
+      "clauseRef": "内部验证实践 V1 · 单元测试",
+      "requirement": "模型核心计算（成本累计、QALY 累计、转移矩阵）有自动化单元测试且全部通过",
+      "requirementEn": "Core calculations (costs, QALYs, transition matrices) covered by automated unit tests, all passing",
+      "guidance": "至少覆盖：贴现公式、QALY 计算、成本累积、状态清零。",
+      "riskLevel": "major",
+      "evidenceHint": "测试报告"
+    },
+    {
+      "clauseRef": "内部验证实践 V2 · 极端与退化检验",
+      "requirement": "极端参数（0/1 概率、零成本）下模型行为合理，不产生负数成本/负 QALY 等异常",
+      "requirementEn": "Extreme parameters produce plausible behaviour; no negative costs or QALYs",
+      "guidance": "退化检验是最便宜的完整性测试：参数设 0 与 1，看输出是否常识。",
+      "riskLevel": "major",
+      "evidenceHint": "退化检验记录"
+    },
+    {
+      "clauseRef": "内部验证实践 V3 · 参数分布合理性",
+      "requirement": "PSA 参数分布设定恰当（概率用 Beta/Dirichlet、成本用 Gamma/LogNormal、截尾处理），抽样不产生无意义值",
+      "requirementEn": "PSA distributions are appropriate; sampling never produces meaningless values",
+      "guidance": "常见错误：用正态分布给概率抽样产生 >1 或 <0。",
+      "riskLevel": "major",
+      "evidenceHint": "分布设定表"
+    },
+    {
+      "clauseRef": "内部验证实践 V4 · 情景压力测试",
+      "requirement": "关键结构假设做了情景压力测试（周期长度、外推方法、无记忆性放宽），结果稳健性有结论",
+      "requirementEn": "Key structural assumptions stress-tested (cycle length, extrapolation method); robustness concluded",
+      "guidance": "外推方法不同（指数/Weibull/样条）对终身结果影响巨大，必须情景化。",
+      "riskLevel": "major",
+      "evidenceHint": "情景分析结果"
+    },
+    {
+      "clauseRef": "内部验证实践 V5 · 代码审查",
+      "requirement": "模型代码（或电子表格公式）经独立人员代码审查，审查意见与处置有记录",
+      "requirementEn": "Model code (or spreadsheet formulas) independently reviewed; comments and disposition recorded",
+      "guidance": "Excel 模型同样需要审查：公式逐格核对（trace precedents）。",
+      "riskLevel": "major",
+      "evidenceHint": "代码审查记录"
+    },
+    {
+      "clauseRef": "版本管理 V6 · 版本与变更",
+      "requirement": "模型有唯一版本标识，已发布版本不可变；变更走受控流程并保留历史版本",
+      "requirementEn": "Model has unique version identifier; published versions immutable; changes controlled with history",
+      "guidance": "报告与申报引用的必须是某个固定版本，且能查到该版本的哈希/归档。",
+      "riskLevel": "critical",
+      "evidenceHint": "版本清单与归档引用"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "code": "ALCOA-ANALYSIS",
+  "title": "分析数据完整性自查表（ALCOA+）",
+  "titleEn": "Analysis Data Integrity Checklist (ALCOA+)",
+  "scope": "data_integrity",
+  "category": "quality",
+  "gxpAreas": ["EVS", "OUT", "CST", "MDL", "ANA", "RPT"],
+  "regulation": "ALCOA+ principles (WHO TRS 1033 Annex 4, PIC/S PI 041, MHRA GxP Data Integrity Guidance 2018)",
+  "authority": "WHO / PIC/S / MHRA",
+  "version": "ALCOA+（Attributable, Legible, Contemporaneous, Original, Accurate + Complete, Consistent, Enduring, Available）；分析数据沿用同一纪律",
+  "description": "药物经济学分析数据（临床试验输出、费用数据、效用数据、建模中间文件）的数据完整性自查：归属、清晰、同步、原始、准确、完整、一致、持久、可获得，以及分析场景特有的版本控制与可复现性。",
+  "descriptionEn": "Data integrity self-assessment for pharmacoeconomic analysis data following ALCOA+ plus analysis-specific version control and reproducibility.",
+  "items": [
+    {
+      "clauseRef": "ALCOA · Attributable 可归属",
+      "requirement": "每条分析记录/数据变更可归属到具体人员（电子签名或明确的操作者记录）",
+      "requirementEn": "Every record and change is attributable to a specific person",
+      "guidance": "共享账号不允许；系统按账号追踪。",
+      "riskLevel": "critical",
+      "evidenceHint": "操作者与签名记录"
+    },
+    {
+      "clauseRef": "ALCOA · Legible 清晰可读",
+      "requirement": "数据与记录清晰、持久可读，电子数据可被工具读取而非只能截图",
+      "requirementEn": "Data and records are legible and machine-readable, not screenshots",
+      "guidance": "数字表格必须交付可解析文件（CSV/XLSX/脚本输出），截图不是数据。",
+      "riskLevel": "major",
+      "evidenceHint": "原始数据文件"
+    },
+    {
+      "clauseRef": "ALCOA · Contemporaneous 同步记录",
+      "requirement": "数据在其产生时同步记录，事后补录必须显式标记并说明",
+      "requirementEn": "Data recorded at the time of generation; backfill explicitly marked and explained",
+      "guidance": "分析当天记录分析；'事后统一补'是数据完整性红旗。",
+      "riskLevel": "critical",
+      "evidenceHint": "时间戳序列"
+    },
+    {
+      "clauseRef": "ALCOA · Original 原始",
+      "requirement": "保留原始数据与原始输出，派生数据可溯源到原始数据",
+      "requirementEn": "Original data and outputs retained; derived data traceable to source",
+      "guidance": "模型输入参数应能追溯到其来源研究或来源文件的原始记录。",
+      "riskLevel": "critical",
+      "evidenceHint": "原始-派生追溯链"
+    },
+    {
+      "clauseRef": "ALCOA · Accurate 准确",
+      "requirement": "无错误、无未记录的修改；修改留痕（修改前值、修改后值、理由）",
+      "requirementEn": "No errors, no undocumented modifications; changes leave before/after/reason",
+      "guidance": "修改数据必须留修改记录——就像纸质记录划改签名一样。",
+      "riskLevel": "critical",
+      "evidenceHint": "修改留痕记录"
+    },
+    {
+      "clauseRef": "ALCOA+ · Complete 完整",
+      "requirement": "数据完整无缺：无选择性报告、无整行删除；缺失有记录",
+      "requirementEn": "Data complete: no selective reporting, no silent deletions; missing data recorded",
+      "guidance": "排除的离群值/无效数据必须有排除记录与理由。",
+      "riskLevel": "critical",
+      "evidenceHint": "数据清单与排除记录"
+    },
+    {
+      "clauseRef": "ALCOA+ · Consistent 一致",
+      "requirement": "事件时间顺序一致，数据文件与分析脚本时间戳逻辑连贯",
+      "requirementEn": "Events chronologically consistent; file and script timestamps coherent",
+      "guidance": "输出文件时间早于输入文件时间=逻辑矛盾，审查员会追问。",
+      "riskLevel": "major",
+      "evidenceHint": "文件时间戳审计"
+    },
+    {
+      "clauseRef": "ALCOA+ · Enduring 持久",
+      "requirement": "记录在法规要求的保存期内持久可用（含软件版本可打开）",
+      "requirementEn": "Records persist across the retention period and remain openable",
+      "guidance": "旧版本 Excel/R 文件要能在当前环境打开并复核。",
+      "riskLevel": "major",
+      "evidenceHint": "长期归档计划"
+    },
+    {
+      "clauseRef": "ALCOA+ · Available 可获得",
+      "requirement": "记录随时可检索、可提供给审查方（含导出格式可读）",
+      "requirementEn": "Records retrievable and presentable to review bodies",
+      "guidance": "外部评审要什么能给什么：原始数据、脚本、版本、审计线索。",
+      "riskLevel": "major",
+      "evidenceHint": "导出与检索测试"
+    },
+    {
+      "clauseRef": "分析场景 A1 · 版本控制",
+      "requirement": "分析脚本、模型文件、数据文件有版本控制，每次运行引用具体版本",
+      "requirementEn": "Scripts, models and data under version control; runs reference exact versions",
+      "guidance": "Git/目录快照均可，关键是'这次结果是用哪个版本算出来的'可以回答。",
+      "riskLevel": "critical",
+      "evidenceHint": "版本库与运行记录"
+    },
+    {
+      "clauseRef": "分析场景 A2 · 计算可复现",
+      "requirement": "关键计算结果可由脚本或公式复现；手工计算的中间文件标注计算人",
+      "requirementEn": "Key results reproducible from scripts/formulas; manual calculations attributed",
+      "guidance": "试问：换一个人，拿着同样的文件，能否得到同样的 ICER？",
+      "riskLevel": "critical",
+      "evidenceHint": "复现测试记录"
+    },
+    {
+      "clauseRef": "分析场景 A3 · 数据锁库",
+      "requirement": "分析锁定期后数据冻结；锁库后的任何数据变化走变更控制",
+      "requirementEn": "Data frozen at analysis lock; post-lock changes go through change control",
+      "guidance": "'锁库了又改数据'必须等同数据完整性事件处理。",
+      "riskLevel": "critical",
+      "evidenceHint": "锁库记录"
+    },
+    {
+      "clauseRef": "分析场景 A4 · 导出完整性",
+      "requirement": "导出/复制数据有记录（谁、何时、什么、多少），副本可核对",
+      "requirementEn": "Data exports/copies logged (who, when, what, how much); copies verifiable",
+      "guidance": "发给外部顾问的数据集也要留痕——它脱离了受控环境。",
+      "riskLevel": "major",
+      "evidenceHint": "导出日志"
+    },
+    {
+      "clauseRef": "分析场景 A5 · 系统审计追踪",
+      "requirement": "承载分析数据的工作台系统提供不可篡改的审计追踪（本工作台即满足）",
+      "requirementEn": "Systems holding analysis data provide an immutable audit trail",
+      "guidance": "本工作台：哈希链审计 + 防篡改触发器 + 电子签名。",
+      "riskLevel": "major",
+      "evidenceHint": "审计链校验结果"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "code": "UTL",
+  "recordPrefix": "UTL",
+  "name": "效用与健康结局研究",
+  "nameEn": "Utilities & Health Outcomes Study",
+  "category": "outcomes",
+  "gxpAreas": ["OUT", "RSD"],
+  "regulationRefs": [
+    "EQ-5D user guide (EuroQol Research Foundation)",
+    "ISPOR - Valuing Health Outcomes Good Research Practices",
+    "中国药物经济学评价指南（2020）第五章 健康产出与效用测量"
+  ],
+  "description": "健康结局如何被量化必须透明：量表选择、评分算法、效用值来源与人群、映射方法。QALY 的每一个数字都要能回答'它是怎么来的'。",
+  "descriptionEn": "How health outcomes are quantified must be transparent: instrument choice, scoring algorithm, utility source population, mapping method. Every QALY digit must answer 'where did this come from'.",
+  "slaDays": 45,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "data_collected", "scoring", "mapping", "clinical_verified", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "研究标题", "labelEn": "Study title", "type": "text", "required": true },
+    { "key": "summary", "label": "研究目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "负责人", "labelEn": "Owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品/适应症", "labelEn": "Drug / indication", "type": "text", "required": true }
+  ],
+
+  "steps": [
+    {
+      "code": "data_collection",
+      "name": "数据收集",
+      "nameEn": "Data collection",
+      "role": ["heor_researcher", "data_manager"],
+      "type": "task",
+      "onComplete": "data_collected",
+      "requiresFields": ["sourceData"],
+      "form": [
+        { "key": "sourceData", "label": "数据来源与人群", "type": "textarea", "required": true },
+        { "key": "instrumentRaw", "label": "原始量表（EQ-5D-5L/3L、SF-6D、HUI 等）", "type": "text", "required": true },
+        { "key": "sampleSize", "label": "样本量", "type": "text", "required": true },
+        { "key": "dataCustody", "label": "数据保管（谁持有原始数据）", "type": "text", "required": true }
+      ],
+      "guidance": "原始数据由数据管理员保管：效用研究的结论将来要在 HTA 申报中被逐行拷问，数据不能只在分析师的笔记本电脑里。"
+    },
+    {
+      "code": "scoring",
+      "name": "效用评分",
+      "nameEn": "Utility scoring",
+      "role": ["heor_researcher"],
+      "type": "task",
+      "onComplete": "mapping",
+      "requiresFields": ["instrument", "scoringMethod"],
+      "persistFields": { "root_cause_method": "scoringMethod" },
+      "form": [
+        { "key": "instrument", "label": "评分量表", "type": "text", "required": true },
+        { "key": "scoringMethod", "label": "计分算法与价值集（如中国 EQ-5D-5L 价值集）", "type": "textarea", "required": true },
+        { "key": "utilitiesTable", "label": "效用值表（健康状态→效用）", "type": "textarea", "required": true },
+        { "key": "imputation", "label": "缺失数据处理", "type": "textarea", "required": false }
+      ],
+      "guidance": "价值集（value set）必须注明国别与版本：同一个 EQ-5D 状态用不同价值集会得到不同效用，申报时这是常见质询点。"
+    },
+    {
+      "code": "mapping",
+      "name": "映射与验证",
+      "nameEn": "Mapping & validation",
+      "role": ["biostatistician", "modeler"],
+      "type": "task",
+      "onComplete": "clinical_verified",
+      "requiresFields": ["mappingMethod", "validationResult"],
+      "persistFields": { "effectiveness_check": "validationResult" },
+      "form": [
+        { "key": "mappingMethod", "label": "映射方法（需映射时）", "type": "select", "required": true, "options": ["direct (EQ-5D 可用)", "mapping (回归/应答映射)", "外推", "不适用"] },
+        { "key": "validationResult", "label": "验证结果（R²、MAE 或临床一致性）", "type": "textarea", "required": true },
+        { "key": "assumptions", "label": "映射假设与局限", "type": "textarea", "required": true }
+      ],
+      "guidance": "映射是把非偏好型数据变成效用的'翻译'，翻译不可能完全保真——必须报告验证指标与局限。"
+    },
+    {
+      "code": "clinical_check",
+      "name": "临床合理性审阅",
+      "nameEn": "Clinical plausibility review",
+      "role": ["clinical_advisor"],
+      "type": "signature",
+      "signatureMeaning": "reviewed",
+      "onComplete": "clinical_verified",
+      "form": [
+        { "key": "clinicalNotes", "label": "临床审阅意见", "type": "textarea", "required": true },
+        { "key": "plausibility", "label": "临床合理性结论", "type": "select", "required": true, "options": ["plausible", "concerns", "implausible"] }
+      ],
+      "guidance": "临床顾问从疾病自然史角度检查：进展状态的效用是否合理、治愈状态是否被夸大。统计学上完美的效用值可能在临床上荒谬。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用（数据+评分脚本+报告）", "type": "textarea", "required": true }
+      ],
+      "guidance": "归档必须包含：原始数据引用、评分脚本、价值集版本、验证指标。"
+    }
+  ]
+}

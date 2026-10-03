@@ -1,0 +1,142 @@
+{
+  "code": "SLR",
+  "recordPrefix": "SLR",
+  "name": "系统文献综述",
+  "nameEn": "Systematic Literature Review (SLR)",
+  "category": "evidence",
+  "gxpAreas": ["EVS", "RSD"],
+  "regulationRefs": [
+    "PRISMA 2020 - preferred reporting items for systematic reviews",
+    "Cochrane Handbook for Systematic Reviews of Interventions",
+    "中国药物经济学评价指南（2020）第三章 数据来源（文献）"
+  ],
+  "description": "受控的系统文献综述流程：检索策略先批准、筛选与提取留痕、质量评估、证据综合、QA 独立审阅后关闭。结论必须能溯源到具体的文献。",
+  "descriptionEn": "A controlled SLR pipeline: search strategy approved first, screening and extraction traced, quality assessed, evidence synthesised, then closed by independent QA.",
+  "slaDays": 60,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "search_approved", "screening", "extraction", "assessment", "synthesis", "qa_review", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "综述标题", "labelEn": "Review title", "type": "text", "required": true },
+    { "key": "summary", "label": "综述目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "综述负责人", "labelEn": "Review owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品/主题", "labelEn": "Drug / topic", "type": "text", "required": true }
+  ],
+
+  "steps": [
+    {
+      "code": "search_protocol",
+      "name": "检索策略确认",
+      "nameEn": "Search strategy sign-off",
+      "role": ["evidence_specialist"],
+      "type": "task",
+      "onComplete": "search_approved",
+      "requiresFields": ["databases", "searchTerms", "inclusionCriteria"],
+      "persistFields": { "study_code": "databases" },
+      "form": [
+        { "key": "databases", "label": "数据库（PubMed/Embase/CNKI 等）", "type": "textarea", "required": true },
+        { "key": "searchTerms", "label": "检索式与日期范围", "type": "textarea", "required": true },
+        { "key": "inclusionCriteria", "label": "纳入/排除标准", "type": "textarea", "required": true },
+        { "key": "slrType", "label": "综述类型", "type": "select", "required": true, "options": ["efficacy evidence", "utilities", "costs", "comparator landscape", "mixed"] }
+      ],
+      "guidance": "检索策略先于执行获批：事后补检索式等于没有检索式。纳入/排除标准必须在看到结果之前写定。"
+    },
+    {
+      "code": "screening",
+      "name": "文献筛选（双重）",
+      "nameEn": "Screening (dual)",
+      "role": ["evidence_specialist", "heor_researcher"],
+      "type": "task",
+      "onComplete": "screening",
+      "requiresFields": ["screenedCount", "includedCount"],
+      "form": [
+        { "key": "screenedCount", "label": "初筛文献数", "type": "text", "required": true },
+        { "key": "includedCount", "label": "纳入文献数", "type": "text", "required": true },
+        { "key": "excludedReasons", "label": "排除理由分布", "type": "textarea", "required": true },
+        { "key": "prismaRef", "label": "PRISMA 流程图引用", "type": "text", "required": false }
+      ],
+      "guidance": "筛选至少两人独立完成并有分歧仲裁记录——一个人筛选的综述无法向审稿人证明没有选择性遗漏。"
+    },
+    {
+      "code": "extraction",
+      "name": "数据提取",
+      "nameEn": "Data extraction",
+      "role": ["evidence_specialist", "heor_researcher"],
+      "type": "task",
+      "onComplete": "extraction",
+      "requiresFields": ["extractionTable"],
+      "persistFields": { "protocol_number": "extractionTable" },
+      "form": [
+        { "key": "extractionTable", "label": "提取表（字段与核对方式）", "type": "textarea", "required": true },
+        { "key": "doubleExtraction", "label": "是否双重提取", "type": "select", "required": true, "options": ["yes", "no", "partial"] },
+        { "key": "discrepancies", "label": "分歧与裁决记录", "type": "textarea", "required": false }
+      ],
+      "guidance": "提取表记录每篇文献的疗效、样本、随访与质量信息，并注明由谁提取、谁复核。"
+    },
+    {
+      "code": "quality_assessment",
+      "name": "质量评估",
+      "nameEn": "Quality assessment",
+      "role": ["evidence_specialist", "biostatistician"],
+      "type": "task",
+      "onComplete": "assessment",
+      "requiresFields": ["qualityTool", "qualityResult"],
+      "form": [
+        { "key": "qualityTool", "label": "评估工具", "type": "select", "required": true, "options": ["Cochrane RoB 2", "NOS (Newcastle-Ottawa)", "NICE checklist", "AMSTAR 2", "自定义"] },
+        { "key": "qualityResult", "label": "评估结论摘要", "type": "textarea", "required": true },
+        { "key": "exclusionsByQuality", "label": "因质量排除的文献", "type": "textarea", "required": false }
+      ],
+      "guidance": "低质量证据要被明确标出而不是悄悄混入结论。质量评估结果直接影响后续建模的参数可信度分级。"
+    },
+    {
+      "code": "synthesis",
+      "name": "证据综合",
+      "nameEn": "Evidence synthesis",
+      "role": ["evidence_specialist", "heor_researcher"],
+      "type": "task",
+      "onComplete": "qa_review",
+      "requiresFields": ["synthesisSummary"],
+      "form": [
+        { "key": "synthesisSummary", "label": "证据综合结论", "type": "textarea", "required": true },
+        { "key": "keyFindings", "label": "关键发现（逐条）", "type": "textarea", "required": true },
+        { "key": "evidenceGaps", "label": "证据缺口", "type": "textarea", "required": true }
+      ],
+      "guidance": "证据缺口要写出来——'没有证据'与'证据显示无效'是两回事，但都必须在报告中显式出现。"
+    },
+    {
+      "code": "qa_review",
+      "name": "QA 独立审阅",
+      "nameEn": "Independent QA review",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "reviewed",
+      "onComplete": "qa_review",
+      "form": [
+        { "key": "qaComments", "label": "QA 审阅意见", "type": "textarea", "required": true },
+        { "key": "qaVerdict", "label": "审阅结论", "type": "select", "required": true, "options": ["ok", "revise"] }
+      ],
+      "guidance": "QA 核查：检索是否可复现、排除是否有据、提取是否可溯源。QA 审阅不是走形式，结论与证据不符时必须退回。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure & archive",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "finalConclusion", "label": "最终结论", "type": "textarea", "required": true },
+        { "key": "archiveRefs", "label": "归档引用（含 PRISMA 流程图）", "type": "textarea", "required": true }
+      ],
+      "guidance": "QA 审阅通过后方可关闭。关闭后的综述不得再修改；补充检索走变更控制。"
+    }
+  ]
+}

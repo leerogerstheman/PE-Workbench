@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>药物经济学工作台 · PE-Workbench</title>
+  <meta name="description" content="药物经济学工作台 - 面向药物经济学与卫生技术评估工作者的受控工作台：配置驱动的工作流、账户权限体系、哈希链审计追踪与电子签名；让每一步分析可理解、可追溯、可审查。">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="/css/pe.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div id="root" class="root">
+    <div class="boot-splash">
+      <div class="brand-mark brand-mark-lg">￥</div>
+      <h1>药物经济学工作台</h1>
+      <p class="boot-sub">PE-Workbench · 正在启动…</p>
+      <noscript>
+        <p><strong>需要启用 JavaScript。</strong>本工作台在浏览器中运行，通过本地 API 工作。</p>
+      </noscript>
+    </div>
+  </div>
+
+  <!-- Zero-dependency, no build step. Load order matters: i18n/api/ui define the
+       primitives the shell and every view build on. The views call
+       window.Views.register(...) as they execute; app.js (loaded last) takes
+       the registry over. -->
+  <script>
+    (function () {
+      var pending = [];
+      window.Views = {
+        pending: pending,
+        register: function (name, view) { pending.push([name, view]); },
+      };
+    })();
+  </script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/views/identity.js"></script>
+  <script src="/js/views/dashboard.js"></script>
+  <script src="/js/views/domains.js"></script>
+  <script src="/js/views/domain.js"></script>
+  <script src="/js/views/workflow.js"></script>
+  <script src="/js/views/inbox.js"></script>
+  <script src="/js/views/records.js"></script>
+  <script src="/js/views/record.js"></script>
+  <script src="/js/views/analysis.js"></script>
+  <script src="/js/views/assessments.js"></script>
+  <script src="/js/views/documents.js"></script>
+  <script src="/js/views/users.js"></script>
+  <script src="/js/views/audit.js"></script>
+  <script src="/js/views/philosophy.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

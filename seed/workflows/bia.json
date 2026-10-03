@@ -1,0 +1,112 @@
+{
+  "code": "BIA",
+  "recordPrefix": "BIA",
+  "name": "预算影响分析",
+  "nameEn": "Budget Impact Analysis (BIA)",
+  "category": "analysis",
+  "gxpAreas": ["ANA", "CST", "RPT"],
+  "regulationRefs": [
+    "ISPOR - Budget Impact Analysis Principles of Good Practice (2022 update)",
+    "中国药物经济学评价指南（2020）第九章 预算影响分析",
+    "国家医保局药品目录调整工作方案（测算要求）"
+  ],
+  "description": "回答'医保基金要为此花多少钱'：目标人群规模估算→市场份额情景→3-5 年预算影响测算→复核→关闭。医保谈判测算的基础文件，数字必须经得起单独复核。",
+  "descriptionEn": "Answers 'how much will the fund spend': eligible population estimation, market share scenarios, 3-5 year budget impact, review, closure. The base document for reimbursement negotiations.",
+  "slaDays": 45,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "population", "scenarios", "calculated", "reviewed", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "分析标题", "labelEn": "Analysis title", "type": "text", "required": true },
+    { "key": "summary", "label": "分析目的", "labelEn": "Objective", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "负责人", "labelEn": "Owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品", "labelEn": "Drug", "type": "text", "required": true },
+    { "key": "horizonYears", "label": "测算年限", "labelEn": "Horizon (years)", "type": "text", "required": true, "help": "通常 3-5 年" }
+  ],
+
+  "steps": [
+    {
+      "code": "population",
+      "name": "目标人群规模估计",
+      "nameEn": "Eligible population estimation",
+      "role": ["heor_researcher", "hta_officer"],
+      "type": "task",
+      "onComplete": "population",
+      "requiresFields": ["popSources", "eligibleRate"],
+      "persistFields": { "study_code": "eligibleRate" },
+      "form": [
+        { "key": "popSources", "label": "流行病学数据来源（发病率/患病率）", "type": "textarea", "required": true },
+        { "key": "eligibleRate", "label": "药品适用比例（诊断/分期/禁忌过滤）", "type": "textarea", "required": true },
+        { "key": "popCalculation", "label": "人群规模计算过程", "type": "textarea", "required": true }
+      ],
+      "guidance": "人群规模是 BIA 的杠杆：同一个药品，'适用人群'口径不同，预算影响可以差几倍。每个过滤步骤都要有来源。"
+    },
+    {
+      "code": "scenarios",
+      "name": "市场份额情景",
+      "nameEn": "Market share scenarios",
+      "role": ["heor_researcher", "hta_officer"],
+      "type": "task",
+      "onComplete": "scenarios",
+      "requiresFields": ["shareScenarios"],
+      "form": [
+        { "key": "shareScenarios", "label": "情景设定（基础/乐观/保守，逐年份额）", "type": "textarea", "required": true },
+        { "key": "shareBasis", "label": "份额依据", "type": "textarea", "required": true },
+        { "key": "comparatorMix", "label": "替代治疗组合与价格", "type": "textarea", "required": true }
+      ],
+      "guidance": "份额情景必须写明依据：'预计 3 年达到 15%'本身不是依据，'参考同类适应症药品上市曲线'才是。"
+    },
+    {
+      "code": "calculation",
+      "name": "预算影响测算",
+      "nameEn": "Budget impact calculation",
+      "role": ["heor_researcher"],
+      "type": "task",
+      "onComplete": "calculated",
+      "requiresFields": ["biaResult"],
+      "persistFields": { "impact_assessment": "biaResult" },
+      "form": [
+        { "key": "biaResult", "label": "逐年预算影响结果（增量）", "type": "textarea", "required": true },
+        { "key": "perPatientCost", "label": "人均年治疗费用", "type": "text", "required": true },
+        { "key": "calculationFile", "label": "计算文件引用", "type": "text", "required": true },
+        { "key": "offsets", "label": "替代治疗费用冲抵", "type": "textarea", "required": true }
+      ],
+      "guidance": "结果同时给出'总额'与'增量'：医保关心的是把现有治疗换成新药后基金净增加多少，而不是绝对额。"
+    },
+    {
+      "code": "review",
+      "name": "复核",
+      "nameEn": "Independent review",
+      "role": ["biostatistician", "heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "verified",
+      "onComplete": "reviewed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "reviewNotes", "label": "复核意见（重算关键步骤）", "type": "textarea", "required": true },
+        { "key": "verdict", "label": "结论", "type": "select", "required": true, "options": ["acceptable", "revise"] }
+      ],
+      "guidance": "复核不是看摘要，是重算：从人群数字出发独立推一遍，误差应只在四舍五入。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用", "type": "textarea", "required": true }
+      ],
+      "guidance": "归档包含：人群数据、份额依据、计算文件、复核记录。"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "code": "CEA",
+  "recordPrefix": "CEA",
+  "name": "成本-效果评估报告",
+  "nameEn": "Cost-Effectiveness Assessment Report",
+  "category": "reporting",
+  "gxpAreas": ["RPT", "ANA", "MDL", "CST", "OUT", "EVS", "RSD"],
+  "regulationRefs": [
+    "CHEERS 2022 - Consolidated Health Economic Evaluation Reporting Standards (28 items)",
+    "中国药物经济学评价指南（2020）第八、十章 结果分析与报告",
+    "国家医保谈判药品测算技术要求"
+  ],
+  "description": "把模型、成本、效用、证据合成进一份可提交的报告：结果汇总→增量分析（ICER/INMB）→阈值解读→CHEERS 合规核查→HEOR 负责人批准→对外提交。写不出来的分析等于没做。",
+  "descriptionEn": "Assembles the model, costs, utilities and evidence into a submittable report: results, incremental analysis (ICER/INMB), threshold interpretation, CHEERS compliance check, HEOR lead approval, external submission.",
+  "slaDays": 60,
+  "requiresQaApproval": true,
+  "criticalityLevels": ["minor", "major", "critical"],
+
+  "states": ["draft", "analysis_done", "interpreted", "cheers_checked", "approved", "submitted", "closed", "cancelled"],
+  "initialState": "draft",
+  "terminalStates": ["closed", "cancelled"],
+
+  "fields": [
+    { "key": "title", "label": "报告标题", "labelEn": "Report title", "type": "text", "required": true },
+    { "key": "summary", "label": "报告摘要", "labelEn": "Summary", "type": "textarea", "required": true },
+    { "key": "criticality", "label": "重要性", "labelEn": "Criticality", "type": "select", "required": true, "options": ["minor", "major", "critical"] },
+    { "key": "ownerId", "label": "报告负责人", "labelEn": "Report owner", "type": "user", "required": false },
+    { "key": "dueDate", "label": "完成期限", "labelEn": "Due date", "type": "date", "required": true },
+    { "key": "product", "label": "药品", "labelEn": "Drug", "type": "text", "required": true },
+    { "key": "indication", "label": "适应症", "labelEn": "Indication", "type": "text", "required": true }
+  ],
+
+  "steps": [
+    {
+      "code": "draft_results",
+      "name": "结果汇总草稿",
+      "nameEn": "Draft results",
+      "role": ["heor_researcher", "modeler"],
+      "type": "task",
+      "onComplete": "analysis_done",
+      "requiresFields": ["costs", "effects", "outcomeMeasure"],
+      "form": [
+        { "key": "outcomeMeasure", "label": "结局指标（QALY/LYG/避免事件）", "type": "select", "required": true, "options": ["QALY", "LYG (life-years gained)", "avoided events", "PFS (progression-free survival)", "其他"] },
+        { "key": "costs", "label": "各组总成本", "type": "textarea", "required": true },
+        { "key": "effects", "label": "各组结局值", "type": "textarea", "required": true },
+        { "key": "modelRefs", "label": "引用模型与参数版本", "type": "textarea", "required": true }
+      ],
+      "guidance": "草稿引用的是已发布的模型版本与已关闭的支撑研究——报告是'最终装配'，不是新分析的起点。"
+    },
+    {
+      "code": "incremental",
+      "name": "增量分析（ICER / INMB）",
+      "nameEn": "Incremental analysis (ICER / INMB)",
+      "role": ["heor_researcher", "biostatistician"],
+      "type": "task",
+      "onComplete": "analysis_done",
+      "requiresFields": ["icer", "inmb"],
+      "persistFields": { "root_cause_method": "icer" },
+      "form": [
+        { "key": "icer", "label": "增量成本-效果比 ICER（元/QALY）", "type": "text", "required": true, "help": "Δ成本 / Δ效果" },
+        { "key": "inmb", "label": "增量净货币收益 INMB（按选定阈值）", "type": "text", "required": true },
+        { "key": "dominance", "label": "象限与占优关系", "type": "select", "required": true, "options": ["intervention dominates (更优且更省)", "intervention dominated (更差且更贵)", "trade-off (需要阈值判断)", "成本中性"] }
+      ],
+      "guidance": "ICER 是比值，比值不能单独说明任何问题——必须同时给出增量成本与增量效果，并说明落在成本-效果平面的哪个象限。"
+    },
+    {
+      "code": "interpretation",
+      "name": "阈值解读与不确定性",
+      "nameEn": "Threshold interpretation & uncertainty",
+      "role": ["heor_researcher", "heor_lead"],
+      "type": "task",
+      "onComplete": "interpreted",
+      "requiresFields": ["wtpThreshold", "conclusion"],
+      "form": [
+        { "key": "wtpThreshold", "label": "支付意愿阈值与来源", "type": "textarea", "required": true, "help": "如 1-3 倍人均 GDP（世卫组织建议）；以官员口径与背景资料为准" },
+        { "key": "conclusion", "label": "经济性结论", "type": "textarea", "required": true },
+        { "key": "sensitivity", "label": "确定性/概率敏感性分析结论", "type": "textarea", "required": true },
+        { "key": "acceptability", "label": "成本-效果可接受曲线要点", "type": "textarea", "required": false }
+      ],
+      "guidance": "'在 XX 阈值下具有经济性'是一句有条件的判断，必须附着阈值来源与不确定性区间。可接受曲线说明结论对阈值的稳健性。"
+    },
+    {
+      "code": "cheers_check",
+      "name": "CHEERS 合规核查",
+      "nameEn": "CHEERS compliance check",
+      "role": ["heor_qa", "heor_researcher"],
+      "type": "task",
+      "onComplete": "cheers_checked",
+      "requiresFields": ["checklistRef", "checkVerdict"],
+      "form": [
+        { "key": "checklistRef", "label": "检查表引用（CHEERS-2022 / 中国指南）", "type": "text", "required": true },
+        { "key": "checkVerdict", "label": "核查结论", "type": "select", "required": true, "options": ["compliant", "compliant_with_notes", "gaps_found"] },
+        { "key": "gapList", "label": "缺口清单", "type": "textarea", "required": false }
+      ],
+      "guidance": "对照 CHEERS 2022 的 28 项逐项自查：一项都没写（如贴现率、币种价格日期、利益冲突）意味着报告会被期刊或评审直接退回。"
+    },
+    {
+      "code": "approval",
+      "name": "报告批准",
+      "nameEn": "Report approval",
+      "role": ["heor_lead"],
+      "type": "signature",
+      "signatureMeaning": "approved",
+      "onComplete": "approved",
+      "independentOfAuthor": true,
+      "requiresFields": ["approvalNotes"],
+      "form": [
+        { "key": "approvalNotes", "label": "批准意见", "type": "textarea", "required": true }
+      ],
+      "guidance": "批准人独立于报告起草。批准之前，报告中的每个数字都必须能一路追溯到已批准的方案、已发布的模型、已关闭的支撑研究。"
+    },
+    {
+      "code": "submission",
+      "name": "对外提交",
+      "nameEn": "External submission",
+      "role": ["hta_officer"],
+      "type": "signature",
+      "signatureMeaning": "performed",
+      "onComplete": "submitted",
+      "requiresFields": ["target"],
+      "persistFields": { "protocol_number": "target" },
+      "form": [
+        { "key": "target", "label": "提交对象（HTA 机构/医保谈判/期刊）", "type": "text", "required": true },
+        { "key": "submissionDate", "label": "提交日期", "type": "date", "required": true },
+        { "key": "trackingRef", "label": "受理/追踪编号", "type": "text", "required": false }
+      ],
+      "guidance": "提交动作本身签名留痕：谁在什么时间把哪一版报告交给了谁。"
+    },
+    {
+      "code": "closure",
+      "name": "关闭归档",
+      "nameEn": "Closure",
+      "role": ["heor_qa"],
+      "type": "signature",
+      "signatureMeaning": "closed",
+      "onComplete": "closed",
+      "independentOfAuthor": true,
+      "form": [
+        { "key": "archiveRefs", "label": "归档引用（终版+提交回执）", "type": "textarea", "required": true }
+      ],
+      "guidance": "终版报告与提交回执一并归档。后续修改一律走变更控制。"
+    }
+  ]
+}
