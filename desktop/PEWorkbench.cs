@@ -81,6 +81,7 @@ namespace PEWorkbench
                 else if (args[i] == "--shot" && i + 1 < args.Length) shotFile = args[i + 1];
                 else if (args[i] == "--theme" && i + 1 < args.Length) WindowTheme.Requested = WindowTheme.Normalize(args[i + 1]);
                 else if (args[i] == "--selftest") selfTest = true;
+                else if (args[i] == "--custom-titlebar") WindowTheme.CustomTitleBar = true;
             }
 
             // Headless verification. The window chrome is the one part of the
@@ -424,6 +425,30 @@ namespace PEWorkbench
         WebView2 webView;
         NotifyIcon tray;
 
+        /// <summary>
+        /// Custom title bar message handling. MainForm already derives from Form,
+        /// so it delegates to the shared WindowTheme helpers rather than
+        /// inheriting WindowTheme.ChromeForm and changing its base class.
+        ///
+        /// WM_GETMINMAXINFO must be filled in by the default handler first, so it
+        /// is the one message that runs base first and is adjusted after.
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            if (WindowTheme.CustomTitleBar)
+            {
+                if (m.Msg == 0x0024)   // WM_GETMINMAXINFO
+                {
+                    base.WndProc(ref m);
+                    WindowTheme.AdjustMinMaxInfo(this, ref m);
+                    return;
+                }
+                if (WindowTheme.HandleNcCalcSize(ref m)) return;
+                if (WindowTheme.HandleNcHitTest(this, ref m)) return;
+            }
+            base.WndProc(ref m);
+        }
+
         public MainForm()
         {
             Text = "药物经济学工作台 · PE-Workbench";
@@ -518,6 +543,49 @@ namespace PEWorkbench
                 }
 
                 webView.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
+
+                // Custom title bar, second half. Both pieces have to be in place
+                // BEFORE the first navigation: Microsoft documents
+                // IsNonClientRegionSupportEnabled as taking effect "after the next
+                // navigation", and the shell marker has to be registered before the
+                // document is created or the page paints one frame in the browser
+                // layout. If the engine refuses the setting, the window keeps its
+                // standard caption rather than ending up with nothing to drag it by.
+                if (WindowTheme.CustomTitleBar)
+                {
+                    bool nonClientOk = false;
+                    try
+                    {
+                        webView.CoreWebView2.Settings.IsNonClientRegionSupportEnabled = true;
+                        nonClientOk = webView.CoreWebView2.Settings.IsNonClientRegionSupportEnabled;
+                    }
+                    catch (Exception ncEx)
+                    {
+                        Program.LogLine("non-client region support unavailable: " + ncEx.Message);
+                    }
+
+                    if (nonClientOk && WindowTheme.ExtendFrameIntoClientArea(this))
+                    {
+                        try
+                        {
+                            // Awaited rather than .Wait()ed: the WebView2 task posts
+                            // its continuation back to this UI thread, so blocking
+                            // would deadlock.
+                            await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(
+                                WindowTheme.ShellMarkerScript());
+                            Program.LogLine("custom title bar: enabled");
+                        }
+                        catch (Exception smEx)
+                        {
+                            Program.LogLine("shell marker not registered: " + smEx.Message);
+                        }
+                    }
+                    else
+                    {
+                        Program.LogLine("custom title bar requested but not applied; keeping the system caption");
+                    }
+                }
+
                 Navigate();
             }
             catch (Exception ex)
