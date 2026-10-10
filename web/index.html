@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-app="pe">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +8,10 @@
   <meta name="description" content="药物经济学工作台 - 面向药物经济学与卫生技术评估工作者的受控工作台：配置驱动的工作流、账户权限体系、哈希链审计追踪与电子签名；让每一步分析可理解、可追溯、可审查。">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="/css/pe.css">
+  <!-- Shared design system. MUST stay after pe.css: it redefines the same
+       custom properties and relies on equal specificity plus later order to
+       win. Byte-identical in LeebertyGXP, LeebertyPV and PE-Workbench. -->
+  <link rel="stylesheet" href="/css/design-system.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
