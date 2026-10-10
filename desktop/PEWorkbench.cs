@@ -1,4 +1,4 @@
-﻿// PEWorkbench.exe - native desktop window for the PharmacoEconomics Workbench.
+// PEWorkbench.exe - native desktop window for the PharmacoEconomics Workbench.
 //
 // Build: node scripts\build-desktop.js   (compiles with the built-in .NET
 //        Framework C# compiler, /platform:x86 to match the Evergreen WebView2
@@ -41,6 +41,7 @@ namespace PEWorkbench
         static Process serverProc;
         static bool weSpawnedServer = false;
         static string shotFile = null;
+        static bool selfTest = false;
         static MainForm mainForm;
         public static bool Quitting = false;
 
@@ -78,7 +79,15 @@ namespace PEWorkbench
             {
                 if (args[i] == "--port" && i + 1 < args.Length) port = int.Parse(args[i + 1]);
                 else if (args[i] == "--shot" && i + 1 < args.Length) shotFile = args[i + 1];
+                else if (args[i] == "--theme" && i + 1 < args.Length) WindowTheme.Requested = WindowTheme.Normalize(args[i + 1]);
+                else if (args[i] == "--selftest") selfTest = true;
             }
+
+            // Headless verification. The window chrome is the one part of the
+            // design system that no browser suite can reach - Windows draws the
+            // frame, not the web engine - so it is asserted here instead. No
+            // server is started and no window is shown.
+            if (selfTest) { RunChromeSelfTest(); return; }
 
             bool createdNew;
             using (var mutex = new Mutex(true, "PE-Workbench-Desktop-Launcher", out createdNew))
@@ -106,6 +115,53 @@ namespace PEWorkbench
                 ShutdownServer();
                 mutex.ReleaseMutex();
             }
+        }
+
+        /// <summary>
+        /// Assert that DWM accepts the window chrome - dark title bar, rounded
+        /// corners, matching border. This is the half of the design system that
+        /// CSS cannot reach, so it cannot be checked from a browser suite.
+        ///
+        /// The handle is created without Show(), so the build never flashes a
+        /// window: DwmSetWindowAttribute works on a window that exists but is not
+        /// visible.
+        /// </summary>
+        static void RunChromeSelfTest()
+        {
+            Console.WriteLine();
+            Console.WriteLine("  PE-Workbench - window chrome self-test");
+            Console.WriteLine("  " + new string('=', 62));
+            Console.WriteLine();
+            Console.WriteLine("  theme       " + WindowTheme.Describe());
+            Console.WriteLine();
+
+            bool ok = false;
+            string detail = "";
+            try
+            {
+                using (var probe = new Form())
+                {
+                    probe.ShowInTaskbar = false;
+                    probe.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+                    IntPtr handle = probe.Handle;   // creates it, does not show it
+                    if (handle == IntPtr.Zero) detail = "no window handle";
+                    else ok = WindowTheme.Apply(probe, WindowTheme.IsDark());
+                }
+            }
+            catch (Exception ex)
+            {
+                detail = ex.Message;
+            }
+
+            Console.WriteLine("  " + (ok ? "PASS" : "FAIL")
+                + "  the window chrome can be themed (dark title bar, rounded corners)"
+                + (detail.Length > 0 ? "  [" + detail + "]" : ""));
+            Console.WriteLine();
+            Console.WriteLine(ok
+                ? "  WINDOW CHROME SELF-TEST PASSED"
+                : "  WINDOW CHROME SELF-TEST FAILED");
+            Console.WriteLine();
+            Environment.Exit(ok ? 0 : 1);
         }
 
         static string LocateRoot()
@@ -385,6 +441,12 @@ namespace PEWorkbench
             webView.Dock = DockStyle.Fill;
             Controls.Add(webView);
 
+            // Window chrome. design-system.css themes everything inside the client
+            // area; the title bar, the border and the corner radius are drawn by
+            // DWM and are unreachable from CSS. Attach() hooks HandleCreated, so
+            // StartPosition and Width/Height above are still honoured.
+            WindowTheme.Attach(this);
+
             tray = new NotifyIcon();
             tray.Text = "药物经济学工作台";
             try
@@ -435,6 +497,25 @@ namespace PEWorkbench
                 if (runtime != null) webView.CreationProperties.BrowserExecutableFolder = runtime;
                 await webView.EnsureCoreWebView2Async();
                 Program.LogLine("InitializeAsync: EnsureCoreWebView2Async done");
+
+                // Keep the page in step with the window chrome. When the theme
+                // follows Windows this stays Auto, which tracks the system live -
+                // the same signal design-system.css reads via prefers-color-scheme.
+                // Pinning it here would freeze the page while the title bar kept
+                // following the system.
+                try
+                {
+                    int? scheme = WindowTheme.PreferredColorScheme();
+                    webView.CoreWebView2.Profile.PreferredColorScheme = !scheme.HasValue
+                        ? CoreWebView2PreferredColorScheme.Auto
+                        : (scheme.Value == 1 ? CoreWebView2PreferredColorScheme.Dark
+                                             : CoreWebView2PreferredColorScheme.Light);
+                    Program.LogLine("window theme: " + WindowTheme.Describe());
+                }
+                catch (Exception themeEx)
+                {
+                    Program.LogLine("PreferredColorScheme not applied: " + themeEx.Message);
+                }
 
                 webView.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
                 Navigate();

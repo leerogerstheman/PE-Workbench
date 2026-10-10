@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 /**
  * Build the native desktop launcher: PEWorkbench.exe.
@@ -146,6 +146,15 @@ function compile(libDir) {
     return false;
   }
   const src = path.join(ROOT, 'desktop', 'PEWorkbench.cs');
+  // Window chrome - dark title bar, rounded corners, matching border - is the half
+  // of the design system that CSS cannot reach, because Windows draws the frame,
+  // not the web engine. Byte-identical across LeebertyGXP, LeebertyPV and
+  // PE-Workbench, like web/css/design-system.css.
+  const windowTheme = path.join(ROOT, 'desktop', 'WindowTheme.cs');
+  if (!fs.existsSync(windowTheme)) {
+    warn('desktop/WindowTheme.cs not found; the window chrome cannot be themed');
+    return false;
+  }
   const exe = path.join(OUT, 'PEWorkbench.exe');
   const refs = [
     'System.Drawing.dll', 'System.Windows.Forms.dll',
@@ -157,6 +166,7 @@ function compile(libDir) {
     `/out:${exe}`,
     ...refs.map((r) => `/reference:${r}`),
     src,
+    windowTheme,
   ];
   log('compiling PEWorkbench.cs ...');
   const r = spawnSync(csc, args, { stdio: 'pipe', cwd: ROOT });
@@ -211,6 +221,21 @@ function main() {
   log('built:');
   log(`  ${OUT}\\PEWorkbench.exe   (+ 3 WebView2 DLLs)`);
   log(`  ${ROOT}\\PEWorkbench.exe   (double-click here)`);
+
+  // The window chrome - dark title bar, rounded corners, matching border - is the
+  // one part of the design system that no browser suite can reach, because
+  // Windows draws the frame rather than the web engine. The freshly built
+  // launcher asserts it directly, and needs no server to do so.
+  log('');
+  log('window chrome self-test:');
+  const chrome = spawnSync(exe, ['--selftest'], { encoding: 'utf8', cwd: ROOT });
+  process.stdout.write(String(chrome.stdout || ''));
+  if (chrome.stderr && chrome.stderr.trim()) process.stderr.write(String(chrome.stderr));
+  if (chrome.status !== 0) {
+    process.stderr.write('\n  [error] window chrome self-test failed (exit ' + chrome.status + ').\n');
+    process.exit(1);
+  }
+
   log('');
   log('Self-test (paints the window to a PNG, then exits):');
   log('  PEWorkbench.exe --shot D:\\window-check.png');
